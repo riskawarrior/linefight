@@ -93,10 +93,6 @@
     <AppDesigner Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Geometry\Geometry.csproj">
-      <Project>{9B936092-EFD1-4250-9D3A-04FFE642F157}</Project>
-      <Name>Geometry</Name>
-    </ProjectReference>
     <ProjectReference Include="..\UniversalNetwork\UniversalNetwork.csproj">
       <Project>{4524BE6C-D871-42C2-A614-ADC6DBEA159B}</Project>
       <Name>UniversalNetwork</Name>

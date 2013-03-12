@@ -29,7 +29,7 @@ namespace UniversalNetwork {
 			ServerDisconnecting
 		}
 
-		public delegate void NetPackageReceiveHandler(object sender, NetPackageReceived e);
+		public delegate void NetPackageReceiveHandler(object sender, PackageReceived e);
 		public delegate void NetCoreErrorHandler(object sender, NetCoreError e);
 		public delegate void NetClientEventHandler(object sender, NetClientEvent e);
 		public event NetPackageReceiveHandler ReceiveObservers;
@@ -90,7 +90,7 @@ namespace UniversalNetwork {
 			return result.ToArray();
 		}
 
-		protected virtual void openServer(string uname = "", int port = 27788) {
+		public virtual void openServer(string uname = "", int port = 33555) {
 			if (hasConnection()) {
 				disconnect();
 			}
@@ -148,7 +148,7 @@ namespace UniversalNetwork {
 			}
 		}
 
-		protected virtual void connect(string host, int port, string uname, string password = "", bool isReconnect = false) {
+		public virtual void connect(string host, int port, string uname, string password = "", bool isReconnect = false) {
 			if (hasConnection()) {
 				disconnect();
 			}
@@ -293,7 +293,7 @@ namespace UniversalNetwork {
 					handler.BeginReceive(headerbuffer, 0, headerbuffer.Length, SocketFlags.None, new AsyncCallback(receiveHeader), obj);
 
 					if (preProcessData(package, handler)) {
-						dispatchPackageEvent(new NetPackageReceived((NetPackage)package));
+						dispatchPackageEvent(new PackageReceived(package));
 					}
 				}
 			} catch (Exception) {
@@ -324,7 +324,7 @@ namespace UniversalNetwork {
 					} else {
 						ppack.accepted = true;
 						clientnames.Add(ppack.username, client);
-						dispatchClientEvent(new network.NetClientEvent(ClientEventType.connected, ppack.username));
+						dispatchClientEvent(new NetClientEvent(ClientEventType.connected, ppack.username));
 						sendTo((object)ppack, client);
 					}
 				} else {
@@ -354,7 +354,7 @@ namespace UniversalNetwork {
 			return true;
 		}
 
-		protected virtual void send(object package) {
+		public virtual void send(object package) {
 			if (!hasConnection()) {
 				return;
 			}
@@ -380,7 +380,7 @@ namespace UniversalNetwork {
 			}
 		}
 
-		protected virtual void sendTo(object package, string user) {
+		public virtual void sendTo(object package, string user) {
 			if (!hasConnection() || isClient() || !clientnames.ContainsKey(user)) {
 				return;
 			}
@@ -409,7 +409,7 @@ namespace UniversalNetwork {
 			}
 		}
 
-		protected virtual void sendExclude(object package, string user) {
+		public virtual void sendExclude(object package, string user) {
 			if (!hasConnection() || isClient() || !clientnames.ContainsKey(user)) {
 				return;
 			}
@@ -539,7 +539,7 @@ namespace UniversalNetwork {
 			return false;
 		}
 
-		private void dispatchPackageEvent(NetPackageReceived e) {
+		private void dispatchPackageEvent(PackageReceived e) {
 			if (ReceiveObservers != null) {
 				ReceiveObservers(this, e);
 			}
@@ -558,10 +558,10 @@ namespace UniversalNetwork {
 		}
 	}
 
-	class NetPackageReceived : EventArgs {
-		public NetPackage pack;
+	class PackageReceived : EventArgs {
+		public object pack;
 
-		public NetPackageReceived(NetPackage pack) {
+		public PackageReceived(object pack) {
 			this.pack = pack;
 		}
 	}
