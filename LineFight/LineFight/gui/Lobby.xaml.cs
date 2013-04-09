@@ -12,13 +12,18 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace LineFight {
+namespace LineFight.gui {
 	/// <summary>
 	/// Interaction logic for MainWindow.xaml
 	/// </summary>
-	public partial class MainWindow : Window {
-		public MainWindow() {
+	public partial class Lobby : Window {
+		public Lobby() {
 			InitializeComponent();
+		}
+
+		public void test_confirmopen_Click(object sender, RoutedEventArgs e) {
+			ConfirmReady window = new ConfirmReady();
+			window.ShowDialog();
 		}
 	}
 }
