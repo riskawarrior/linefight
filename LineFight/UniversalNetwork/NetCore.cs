@@ -9,7 +9,17 @@ using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 
 namespace UniversalNetwork {
+
+	/// <summary>
+	/// A hálózati kapcsolatokat kezelő magas(abb) szintű osztály
+	/// 
+	/// A külvilággal eseményeken keresztü tartja a kapcsolatot. Ezek külön szálon futnak, a megfelelő kezelésükről gondoskodni kell.
+	/// </summary>
 	class NetCore {
+		/// <summary>
+		/// Belső kommunikációra használt osztály.
+		/// Egy ilyen példányban kerül elküldésre a szervernek a jelszó, illetve a válasz (elutasítva vagy elfogadva) is ebben érkezik meg.
+		/// </summary>
 		[Serializable]
 		private class PasswordPackage {
 			public bool? accepted;
@@ -17,6 +27,12 @@ namespace UniversalNetwork {
 			public string username;
 			public string password;
 
+			/// <summary>
+			/// Konstruktor
+			/// Inicializálja az objektumot a megadott paraméterekkel
+			/// </summary>
+			/// <param name="uname">Csatlakozó kliens neve</param>
+			/// <param name="pass">Jelszó</param>
 			public PasswordPackage(string uname, string pass = "") {
 				accepted = null;
 				message = "";
@@ -24,51 +40,156 @@ namespace UniversalNetwork {
 				password = pass;
 			}
 		}
+
+		/// <summary>
+		/// Utasítás felsorolás belső használatra.
+		/// A szerver küldi a kliensnek tájékoztatásul egy esemény folytán.
+		/// </summary>
 		private enum InternalCommand {
 			Kick,
 			ServerDisconnecting
 		}
 
+		/// <summary>
+		/// Delegate a NetPackageReceiveHandler eseménykezelőjéhez
+		/// </summary>
+		/// <param name="sender">Küldő objektum</param>
+		/// <param name="e">Fogadott csomag</param>
 		public delegate void NetPackageReceiveHandler(object sender, PackageReceived e);
+
+		/// <summary>
+		/// Delegate a NetCoreErrorHandler eseménykezelőjéhez
+		/// </summary>
+		/// <param name="sender">Küldő objektum</param>
+		/// <param name="e">Csomagolt hibaüzenet</param>
 		public delegate void NetCoreErrorHandler(object sender, NetCoreError e);
+
+		/// <summary>
+		/// Delegate a NetClientEventHandler eseménykezelőjéhez
+		/// </summary>
+		/// <param name="sender">Küldő objektum</param>
+		/// <param name="e">Kliens esemény csomag</param>
 		public delegate void NetClientEventHandler(object sender, NetClientEvent e);
+
+		/// <summary>
+		/// Eseméykezelő hálózati csomag fogadásához
+		/// </summary>
 		public event NetPackageReceiveHandler ReceiveObservers;
+
+		/// <summary>
+		/// Eseménykezelő a hálózati kapcsolatban bekövetkező nem várt eseményhez
+		/// A kivételkezelést hivatott kiváltani
+		/// </summary>
 		public event NetCoreErrorHandler NetError;
+
+		/// <summary>
+		/// Eseménykezelő a kliensek akcióinak külvilág felé történő közléséhez
+		/// </summary>
 		public event NetClientEventHandler NetClientEvent;
 
+		/// <summary>
+		/// Port engedélyezés
+		/// </summary>
 		private SocketPermission permission;
+
+		/// <summary>
+		/// A szerver figyelő socketje és a kliens socket
+		/// </summary>
 		private Socket listener, client;
+
+		/// <summary>
+		/// A kliens socketek listája (csak szervernél)
+		/// </summary>
 		private List<Socket> clients;
+
+		/// <summary>
+		/// A kliensek nickjeit tároló dictionary
+		/// Kulcs az egyedi felhasználónév, érték a kliens socket
+		/// </summary>
 		private Dictionary<string, Socket> clientnames;
+
+		/// <summary>
+		/// A klienseket monitorozó szál
+		/// <see cref="clientDisposer()"/>
+		/// </summary>
 		private Thread clientDisposerThread;
 
+		/// <summary>
+		/// A saját felhasználónév (szervernél és kliensnél egyaránt)
+		/// </summary>
 		protected string username;
+
+		/// <summary>
+		/// Jelszó (szervernél és kliensnél is eltárolásra kerül)
+		/// </summary>
 		private string password;
+
+		/// <summary>
+		/// Hostname
+		/// Kliensek újracsatlakozásához van rá szükség.
+		/// </summary>
 		private string host;
+
+		/// <summary>
+		/// Port szám
+		/// Kliensek újracsatlakozásához van rá szükség
+		/// </summary>
 		private int port;
 
+		/// <summary>
+		/// Ez a flag garantálja, hogy csak egyszer történik újracsatlakozási kísérlet a kapcsolat megszakadása után
+		/// </summary>
 		private bool cancelReconnect = false;
 
+		/// <summary>
+		/// Konstruktor
+		/// A jelszót üresre állítja.
+		/// </summary>
 		public NetCore() {
 			password = "";
 		}
 
+		/// <summary>
+		/// Ha van felépített kapcsolat akkor igaz
+		/// Szervernél akkor is igaz, ha az fogadja a kliensek kapcsolódását, de jelenleg nincs csatlakozott kliens
+		/// </summary>
+		/// <returns>Van kapcsolat?</returns>
 		public bool hasConnection() {
 			return client != null || listener != null;
 		}
 
+		/// <summary>
+		/// Ha a kapcsolat ezen végpontja a szerver, akkor igaz
+		/// Ha nincs kapcsolat, akkor hamis
+		/// </summary>
+		/// <returns>Szerver?</returns>
 		public bool isServer() {
 			return listener != null;
 		}
 
+		/// <summary>
+		/// Ha a kapcsolat ezen végpontja a kliens, akkor igaz
+		/// Ha nincs kapcsolat, akkor hamis
+		/// </summary>
+		/// <returns>Kliens?</returns>
 		public bool isClient() {
 			return client != null;
 		}
 
+		/// <summary>
+		/// Beállítja a jelszót
+		/// Szervernél a kapcsolatok fogadása közben is meghívható
+		/// </summary>
+		/// <param name="pass">Új jelszó</param>
 		public void setPassword(string pass) {
 			password = pass;
 		}
 
+		/// <summary>
+		/// Lekérdezi a szerver hálózati címét.
+		/// Alhálózatnál csak az alhálózaton kapott IP címet adja vissza
+		/// </summary>
+		/// <returns>IP cím</returns>
 		public string getMyIp() {
 			IPHostEntry host;
 			string localIP = "?";
@@ -81,6 +202,11 @@ namespace UniversalNetwork {
 			return localIP;
 		}
 
+		/// <summary>
+		/// Lekérdezi a csatlakozott kliensek neveit
+		/// </summary>
+		/// <param name="addMyself">A szerver nevét beleveszi a listába</param>
+		/// <returns>Kliensek neveinek tömbje</returns>
 		public string[] getClientNames(bool addMyself = false) {
 			List<string> result = clientnames.Keys.ToList();
 			if (addMyself) {
@@ -90,6 +216,13 @@ namespace UniversalNetwork {
 			return result.ToArray();
 		}
 
+		/// <summary>
+		/// Szerver kapcsolat megnyitása
+		/// A szerver a sikeres nyitás után fogadja a kliensek kapcsolódási kísérleteit
+		/// Elindítja a kliensek állapotát monitorozó szálat
+		/// </summary>
+		/// <param name="uname">Szerver felhasználóneve</param>
+		/// <param name="port">Hallgatózó port</param>
 		public virtual void openServer(string uname = "", int port = 33555) {
 			if (hasConnection()) {
 				disconnect();
@@ -129,6 +262,11 @@ namespace UniversalNetwork {
 			}
 		}
 
+		/// <summary>
+		/// Elfogadja a bejövő kliens kapcsolatát
+		/// Felkészül az adatfogadásra
+		/// </summary>
+		/// <param name="ar">Aszinkron paraméter</param>
 		private void acceptConnection(IAsyncResult ar) {
 			Socket handler = null, listener = null;
 
@@ -148,6 +286,14 @@ namespace UniversalNetwork {
 			}
 		}
 
+		/// <summary>
+		/// Kapcsolódik a megadott szerverhez
+		/// </summary>
+		/// <param name="host">Szerver hostneve</param>
+		/// <param name="port">Szerver portja</param>
+		/// <param name="uname">Kliens felhasználóneve</param>
+		/// <param name="password">Jelszó a szerverhez</param>
+		/// <param name="isReconnect">Ez újracsatlakozási kísérlet?</param>
 		public virtual void connect(string host, int port, string uname, string password = "", bool isReconnect = false) {
 			if (hasConnection()) {
 				disconnect();
@@ -195,6 +341,11 @@ namespace UniversalNetwork {
 			}
 		}
 
+		/// <summary>
+		/// Kliens kapcsolat esetén megpróbál újracsatlakozni a szerverhez
+		/// A kapcsolat megszakadása esetén használatos
+		/// </summary>
+		/// <param name="onFailMessage">A kapcsolat megszakadásának hibaüzenete</param>
 		private void reconnect(string onFailMessage = "") {
 			if (isServer()) {
 				return;
@@ -221,6 +372,11 @@ namespace UniversalNetwork {
 			}
 		}
 
+		/// <summary>
+		/// Adatok fejlécét fogadó metódus
+		/// Felkészül a fejlécben kapott (bájt szám) adat fogadására
+		/// </summary>
+		/// <param name="ar">Aszinkron paraméter</param>
 		private void receiveHeader(IAsyncResult ar) {
 			object[] obj = new object[2];
 			obj = (object[])ar.AsyncState;
@@ -257,6 +413,11 @@ namespace UniversalNetwork {
 			}
 		}
 
+		/// <summary>
+		/// Fogadja a fejlécben meghatározott mennyiségű adatot több részletben
+		/// Ha a csomag teljes egészében megérkezett, akkor kivált egy eseményt, és mellékeli a csomagot
+		/// </summary>
+		/// <param name="ar">Aszinkron paraméter</param>
 		private void receiveData(IAsyncResult ar) {
 			object[] obj = new object[2];
 			obj = (object[])ar.AsyncState;
@@ -307,6 +468,21 @@ namespace UniversalNetwork {
 			}
 		}
 
+		/// <summary>
+		/// A fogadott csomagot elő-feldolgozza
+		/// Ha a csomag a NetCore belső kommunikációs csomagja, akkor feldolgozza és válaszol rá:
+		/// - Szerver:
+		/// -- Jelszó csomagnál ellenőrzi a jelszót
+		/// -- Felhasználónév csomagnál ellenőrzi a felhasználónevet
+		/// -- Ha minden rendben van felveszi a kliens listába
+		/// - Kliens:
+		/// -- Megvizsgálja a szerver válaszát, ha szükséges szétkapcsolódik
+		/// Hibánál vagy kliens eseménynél kilövi a megfelelő eseményt
+		/// Ha a fogadott csomag nem NetCore kommunkiációs csomag, akkor továbbítja egy eventtel
+		/// </summary>
+		/// <param name="package"></param>
+		/// <param name="client"></param>
+		/// <returns></returns>
 		protected virtual bool preProcessData(object package, Socket client) {
 			if (package is PasswordPackage) {
 				PasswordPackage ppack = (PasswordPackage)package;
@@ -354,6 +530,11 @@ namespace UniversalNetwork {
 			return true;
 		}
 
+		/// <summary>
+		/// Elküldi a csomagot
+		/// Kliensnél a szervernek, szervernél minden kliensnek
+		/// </summary>
+		/// <param name="package">Küldendő <b>serializable</b> csomag</param>
 		public virtual void send(object package) {
 			if (!hasConnection()) {
 				return;
@@ -380,6 +561,12 @@ namespace UniversalNetwork {
 			}
 		}
 
+		/// <summary>
+		/// Elküldi a csomagot
+		/// Csak szervernél: a megadott felhasználónak továbbítja
+		/// </summary>
+		/// <param name="package">Küldendő <b>serializable</b> csomag</param>
+		/// <param name="user">Cél kliens felhasználóneve</param>
 		public virtual void sendTo(object package, string user) {
 			if (!hasConnection() || isClient() || !clientnames.ContainsKey(user)) {
 				return;
@@ -395,6 +582,12 @@ namespace UniversalNetwork {
 			}
 		}
 
+		/// <summary>
+		/// Elküldi a csomagot (belső használat)
+		/// A megadott socketre küldi (csak szerver)
+		/// </summary>
+		/// <param name="package">Küldendő <b>serializable</b> csomag</param>
+		/// <param name="sock">Kliens socket</param>
 		private void sendTo(object package, Socket sock) {
 			if (!hasConnection() || isClient()) {
 				return;
@@ -409,6 +602,12 @@ namespace UniversalNetwork {
 			}
 		}
 
+		/// <summary>
+		/// Elküldi a csomagot
+		/// Csak szervernél: a megadott felhasználót kivéve mindenkinek elküldi a csomagot
+		/// </summary>
+		/// <param name="package">Küldendő <b>serializable</b> csomag</param>
+		/// <param name="user">A 'kimaradó' felhasználó</param>
 		public virtual void sendExclude(object package, string user) {
 			if (!hasConnection() || isClient() || !clientnames.ContainsKey(user)) {
 				return;
@@ -428,6 +627,12 @@ namespace UniversalNetwork {
 			}
 		}
 
+		/// <summary>
+		/// Felkészíti a kapott adatot küldésre
+		/// A szerializálható objektumot bájt tömbbé alakítja
+		/// </summary>
+		/// <param name="obj"><b>Serializable</b> objektum</param>
+		/// <returns>Szerializált objektum</returns>
 		private byte[] prepareData(object obj) {
 			BinaryFormatter formatter = new BinaryFormatter();
 			MemoryStream stream = new MemoryStream();
@@ -443,6 +648,10 @@ namespace UniversalNetwork {
 			return tosend;
 		}
 
+		/// <summary>
+		/// A küldést lezáró aszinkron metódus
+		/// </summary>
+		/// <param name="ar">Aszinkron paraméter</param>
 		private void sendCallback(IAsyncResult ar) {
 			Socket handler = (Socket)ar.AsyncState;
 			try {
@@ -458,6 +667,11 @@ namespace UniversalNetwork {
 			}
 		}
 
+		/// <summary>
+		/// Bontja a kapcsolatot
+		/// Kliensnél: lecsatlakozik a szerverről
+		/// Szervernél: bontja minden klienssel a kapcsolatot, majd zárja a listenert
+		/// </summary>
 		public virtual void disconnect() {
 			if (!hasConnection()) {
 				return;
@@ -490,6 +704,10 @@ namespace UniversalNetwork {
 			}
 		}
 
+		/// <summary>
+		/// Bontja a kapcsolatot a megadott sockettel (szervernél)
+		/// </summary>
+		/// <param name="client">Kliens socket</param>
 		protected virtual void disconnect(Socket client) {
 			if (!hasConnection()) {
 				return;
@@ -505,6 +723,10 @@ namespace UniversalNetwork {
 			}
 		}
 
+		/// <summary>
+		/// Másodpercenként átvizsgálja a klienseket
+		/// Ha az egyik kliens állapota nem csatlakozott, akkor eltávolítja a kliensek listájából
+		/// </summary>
 		private void clientDisposer() {
 			while ((true)) {
 				Thread.Sleep(1000);
@@ -516,6 +738,12 @@ namespace UniversalNetwork {
 			}
 		}
 
+		/// <summary>
+		/// Eltávolítja a klienst a kliensek listáiból
+		/// Ha a kliens bekerült a felhasználóneveket tartalmazó dictionaryba (felépített kapcsolat), akkor eltávolítja
+		/// Eltávolítja a klienst a socketek listájából
+		/// </summary>
+		/// <param name="client"></param>
 		private void removeClient(Socket client) {
 			string user = null;
 			foreach (string item in clientnames.Keys.ToArray()) {
@@ -530,6 +758,11 @@ namespace UniversalNetwork {
 			clients.Remove(client);
 		}
 
+		/// <summary>
+		/// Bontja a kapcsolatot a megadott nevű felhasználóval
+		/// </summary>
+		/// <param name="username">Felhasználónév</param>
+		/// <returns>Kirúgás sikeres?</returns>
 		public virtual bool kick(string username) {
 			if (clientnames.ContainsKey(username)) {
 				sendTo(InternalCommand.Kick, username);
@@ -539,18 +772,30 @@ namespace UniversalNetwork {
 			return false;
 		}
 
+		/// <summary>
+		/// Elküldi a fogadott csomagot egy eventben
+		/// </summary>
+		/// <param name="e">Csomag</param>
 		private void dispatchPackageEvent(PackageReceived e) {
 			if (ReceiveObservers != null) {
 				ReceiveObservers(this, e);
 			}
 		}
 
+		/// <summary>
+		/// Elküldi a hibaüzenetet egy eventben
+		/// </summary>
+		/// <param name="e">Hibaüzenet</param>
 		private void dispatchErrorEvent(NetCoreError e) {
 			if (NetError != null) {
 				NetError(this, e);
 			}
 		}
 
+		/// <summary>
+		/// Elküldi a kliens eseményt egy eventben
+		/// </summary>
+		/// <param name="e">Kliens esemény</param>
 		private void dispatchClientEvent(NetClientEvent e) {
 			if (NetClientEvent != null) {
 				NetClientEvent(this, e);
@@ -558,31 +803,80 @@ namespace UniversalNetwork {
 		}
 	}
 
+	/// <summary>
+	/// A fogadott csomagot tartalmazó event
+	/// </summary>
 	class PackageReceived : EventArgs {
+		/// <summary>
+		/// Fogadott csomag
+		/// </summary>
 		public object pack;
 
+		/// <summary>
+		/// Konstruktor
+		/// Eltárolja a csomagot
+		/// </summary>
+		/// <param name="pack">Csomag</param>
 		public PackageReceived(object pack) {
 			this.pack = pack;
 		}
 	}
 
+	/// <summary>
+	/// Hibaüzenetet tartalmazó event
+	/// </summary>
 	class NetCoreError : EventArgs {
+		/// <summary>
+		/// Hibaüzenet szövegesen
+		/// </summary>
 		public string error;
+
+		/// <summary>
+		/// Hibakód
+		/// </summary>
 		public int code;
 
+		/// <summary>
+		/// Konstruktor
+		/// Eltárolja a hibaüzenetet és a hibakódot
+		/// </summary>
+		/// <param name="error">Hibaüzenet</param>
+		/// <param name="code">Hibakód</param>
 		public NetCoreError(string error, int code = -1) {
 			this.error = error;
 			this.code = code;
 		}
 	}
 
+	/// <summary>
+	/// Kliens események
+	/// Újonnan csatlakozott kliens: connected
+	/// Lekapcsolódott kliens: disconnected
+	/// </summary>
 	enum ClientEventType {
 		connected, disconnected
 	}
+
+	/// <summary>
+	/// Kliens eseményt tartalmazó event
+	/// </summary>
 	class NetClientEvent : EventArgs {
+		/// <summary>
+		/// Kliens esemény
+		/// </summary>
 		public ClientEventType ev;
+
+		/// <summary>
+		/// Felhasználónév, akihez az esemény kapcsolódik
+		/// </summary>
 		public string username;
 
+		/// <summary>
+		/// Konstruktor
+		/// Eltárolja a kliens eseményt és a felhasználónevet, akihez az esemény tartozik
+		/// </summary>
+		/// <param name="ev">Kliens esemény</param>
+		/// <param name="username">Felhasználónév</param>
 		public NetClientEvent(ClientEventType ev, string username) {
 			this.ev = ev;
 			this.username = username;
