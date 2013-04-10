@@ -10,14 +10,35 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using System.Windows.Threading;
+
+using LineFight.model;
 
 namespace LineFight.gui {
 	/// <summary>
 	/// Interaction logic for ConfirmReady.xaml
 	/// </summary>
 	public partial class ConfirmReady : Window {
-		public ConfirmReady() {
+		private LFNet network;
+		private int Remaining;
+		private DispatcherTimer Timer;
+
+		public bool DialogResult { get; set; }
+
+		public ConfirmReady(LFNet network) {
 			InitializeComponent();
+
+			this.network = network;
+			Remaining = 300;
+			DialogResult = false;
+			Timer.Interval = new TimeSpan(1000000);
+			Timer.Tick += Timer_Tick;
+			Timer.IsEnabled = true;
+		}
+
+		private void Timer_Tick(object sender, EventArgs e) {
+			Remaining -= 1;
+
 		}
 	}
 }

@@ -15,7 +15,7 @@ namespace UniversalNetwork {
 	/// 
 	/// A külvilággal eseményeken keresztü tartja a kapcsolatot. Ezek külön szálon futnak, a megfelelő kezelésükről gondoskodni kell.
 	/// </summary>
-	class NetCore {
+	public class NetCore {
 		/// <summary>
 		/// Belső kommunikációra használt osztály.
 		/// Egy ilyen példányban kerül elküldésre a szervernek a jelszó, illetve a válasz (elutasítva vagy elfogadva) is ebben érkezik meg.
@@ -806,7 +806,7 @@ namespace UniversalNetwork {
 	/// <summary>
 	/// A fogadott csomagot tartalmazó event
 	/// </summary>
-	class PackageReceived : EventArgs {
+	public class PackageReceived : EventArgs {
 		/// <summary>
 		/// Fogadott csomag
 		/// </summary>
@@ -825,7 +825,7 @@ namespace UniversalNetwork {
 	/// <summary>
 	/// Hibaüzenetet tartalmazó event
 	/// </summary>
-	class NetCoreError : EventArgs {
+	public class NetCoreError : EventArgs {
 		/// <summary>
 		/// Hibaüzenet szövegesen
 		/// </summary>
@@ -853,14 +853,14 @@ namespace UniversalNetwork {
 	/// Újonnan csatlakozott kliens: connected
 	/// Lekapcsolódott kliens: disconnected
 	/// </summary>
-	enum ClientEventType {
+	public enum ClientEventType {
 		connected, disconnected
 	}
 
 	/// <summary>
 	/// Kliens eseményt tartalmazó event
 	/// </summary>
-	class NetClientEvent : EventArgs {
+	public class NetClientEvent : EventArgs {
 		/// <summary>
 		/// Kliens esemény
 		/// </summary>
