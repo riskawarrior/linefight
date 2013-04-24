@@ -49,6 +49,9 @@
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
+    <Reference Include="WriteableBitmapEx.Wpf">
+      <HintPath>Resources\WriteableBitmapEx_v1.0.7.0\WPF\WriteableBitmapEx.Wpf.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml">
@@ -58,6 +61,10 @@
     <Page Include="gui\ConfirmReady.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="gui\GameWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="gui\Lobby.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -69,6 +76,9 @@
     </Compile>
     <Compile Include="gui\ConfirmReady.xaml.cs">
       <DependentUpon>ConfirmReady.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="gui\GameWindow.xaml.cs">
+      <DependentUpon>GameWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="gui\Lobby.xaml.cs">
       <DependentUpon>Lobby.xaml</DependentUpon>
@@ -83,6 +93,7 @@
     <Compile Include="gui\ProfileWindow.xaml.cs">
       <DependentUpon>ProfileWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="model\Game.cs" />
     <Compile Include="model\LFNet.cs" />
     <Compile Include="model\Profile.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
