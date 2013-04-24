@@ -10,6 +10,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using Microsoft.Win32;
 
 namespace LineFight.gui
 {
@@ -18,9 +19,21 @@ namespace LineFight.gui
     /// </summary>
     public partial class ProfileWindow : Window
     {
+        Profile profile;
         public ProfileWindow()
         {
             InitializeComponent();
+        }
+
+        private void btnClose_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void btnOpenAvatar_Click(object sender, RoutedEventArgs e)
+        {
+            OpenFileDialog dialog = new OpenFileDialog();
+            
         }
     }
 }
