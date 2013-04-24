@@ -21,16 +21,5 @@ namespace LineFight.gui {
 			InitializeComponent();
 		}
 
-		/// <summary>
-		/// Tesztelő metódos a ConfirmReady dialógusablakhoz. Ha útban van dobd ki nyugodtan.
-		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="e"></param>
-		public void test_confirmopen_Click(object sender, RoutedEventArgs e) {
-			LineFight.model.LFNet net = new model.LFNet();
-
-			ConfirmReady window = new ConfirmReady(net);
-			window.ShowDialog();
-		}
 	}
 }

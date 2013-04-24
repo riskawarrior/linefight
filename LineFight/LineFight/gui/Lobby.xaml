@@ -9,7 +9,6 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
-        
-        <Button Name="test_confirmopen" Click="test_confirmopen_Click">Teszt: ConfirmReady ablak</Button>
+
     </Grid>
 </Window>
