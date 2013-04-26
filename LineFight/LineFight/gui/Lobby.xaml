@@ -1,7 +1,7 @@
 ﻿<Window x:Class="LineFight.gui.Lobby"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Lobby" Height="350" Width="525">
+        Title="Lobby" Height="350" Width="525" Loaded="Window_Loaded">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto" />

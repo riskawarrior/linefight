@@ -21,5 +21,11 @@ namespace LineFight.gui {
 			InitializeComponent();
 		}
 
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            GameWindow g = new GameWindow();
+            g.Show();
+        }
+
 	}
 }
