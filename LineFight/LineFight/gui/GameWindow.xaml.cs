@@ -14,11 +14,8 @@ namespace LineFight.gui
 {
     public partial class GameWindow : Window
     {
-        private Image Arena;
         private Game Controller;
         private DispatcherTimer CountDown;
-        private Image ImgMyProfile;
-        private Image ImgOpponentProfile;
         private Label lblCountdown;
         private Profile MyProfile;
         private LFNet Network;
@@ -29,6 +26,7 @@ namespace LineFight.gui
 
         private void btnAbandon_Click(object o, RoutedEventArgs e)
         {
+            Refresher.Stop();
             this.Close();
         }
 
@@ -40,13 +38,35 @@ namespace LineFight.gui
         public GameWindow()
         {
             InitializeComponent();
-
-            //playerNamelb.Content = MyProfile.Username;
-            //opponentNamelb.Content = OpponentProfile.Username;
-            /*if (MyProfile.Avatar != null)
+            Refresher = new DispatcherTimer();
+            Refresher.Interval = new TimeSpan(10);
+            Refresher.Tick += new EventHandler(Refresher_Tick);
+            MyProfile = new Profile();
+            OpponentProfile = new Profile();
+            if (MyProfile.Username == null)
             {
-                playerImg.Source = MyProfile.Avatar;
-            }*/
+                playerNamelb.Content = "Me";
+            }
+            else
+            {
+                playerNamelb.Content = MyProfile.Username;
+            }
+            if (OpponentProfile.Username == null)
+            {
+                opponentNamelb.Content = "Opponent";
+            }
+            else
+            {
+                opponentNamelb.Content = OpponentProfile.Username;
+            }
+            if (MyProfile.Avatar != null)
+            {
+                ImgMyProfile.Source = MyProfile.Avatar;
+            }
+            if (OpponentProfile.Avatar != null)
+            {
+                ImgOpponentProfile.Source = MyProfile.Avatar;
+            }
             NewGame();
             
 
@@ -76,24 +96,44 @@ namespace LineFight.gui
 
         public void NewGame()
         {
+            Refresher.Start();
             Controller = new Game();
             Controller.Start();
-            gameImg.Source = Controller.getArena();
+            Arena.Source = Controller.getArena();
         }
 
         private void Refresher_Tick(object o, EventArgs e)
-        { 
-            
+        {
+            if (Controller.IsEnded())
+            {
+                MessageBoxResult result = MessageBoxResult.No;
+                if (Controller.IsLost() && Controller.IsWin())
+                {
+                    result = MessageBox.Show("Draw! Wanna play again?", "Game over", MessageBoxButton.YesNo);
+                }
+                else if (Controller.IsLost())
+                {
+                    result =  MessageBox.Show("You lost! Wanna play again?", "Game over", MessageBoxButton.YesNo);
+                }
+                else if (Controller.IsWin())
+                {
+                    result = MessageBox.Show("You win! Wanna play again?", "Game over", MessageBoxButton.YesNo);
+                }
+                Refresher.Stop();
+                if (result == MessageBoxResult.Yes /*&& opponentAnswer == "yes"*/)
+                {
+                    NewGame();
+                }
+                else
+                {
+                    this.Close();
+                }
+            }
         }
 
         private void newGameBtn_Click(object sender, RoutedEventArgs e)
         {
             NewGame();
-        }
-
-        private void gameImg_ImageFailed(object sender, ExceptionRoutedEventArgs e)
-        {
-
         }
     }
 }

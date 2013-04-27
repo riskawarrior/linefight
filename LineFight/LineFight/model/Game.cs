@@ -23,8 +23,13 @@ namespace LineFight.model
         private Color OpponentColor = Colors.Red;
         private Facing OpponentFacing = Facing.Down;
         private Point Position;
+        private Point OpponentPosition;
         private int Speed = 10;
         private bool Win = false;
+        private int myPosX = 5;
+        private int myPosY = 5;
+        private int opPosX = 495;
+        private int opPosY = 5;
 
         public WriteableBitmap getArena()
         {
@@ -46,10 +51,16 @@ namespace LineFight.model
             return Win;
         }
 
+        public bool IsLost()
+        {
+            return Lost;
+        }
+
         public void Mover_Tick(object o, EventArgs e)
         {
             Point newPosition = Position;
-            switch(Facing){
+            switch (Facing)
+            {
                 case Facing.Down:
                     {
                         newPosition.Y++;
@@ -71,16 +82,60 @@ namespace LineFight.model
                         break;
                     }
             }
-            if (newPosition.X >= 0.0 && newPosition.Y >= 0.0 && newPosition.X<=500 && newPosition.Y<=500 && Arena.GetPixel(Convert.ToInt32(newPosition.X), Convert.ToInt32(newPosition.Y)) == Colors.Black)
+            Point newOpPosition = OpponentPosition;
+            switch (OpponentFacing)
             {
-                Arena.DrawLine(Convert.ToInt32(Position.X.ToString()), Convert.ToInt32(Position.Y.ToString()), Convert.ToInt32(newPosition.X.ToString()), Convert.ToInt32(newPosition.Y.ToString()), MyColor);
-                Position = newPosition;
+                case Facing.Down:
+                    {
+                        newOpPosition.Y++;
+                        break;
+                    }
+                case Facing.Left:
+                    {
+                        newOpPosition.X--;
+                        break;
+                    }
+                case Facing.Up:
+                    {
+                        newOpPosition.Y--;
+                        break;
+                    }
+                case Facing.Right:
+                    {
+                        newOpPosition.X++;
+                        break;
+                    }
             }
-            else
+            bool felt1 = newPosition.X >= 0.0 && newPosition.Y >= 0.0 && newPosition.X <= 500 && newPosition.Y <= 500 && Arena.GetPixel(Convert.ToInt32(newPosition.X), Convert.ToInt32(newPosition.Y)) == Colors.Black;
+            bool felt2 = newOpPosition.X >= 0.0 && newOpPosition.Y >= 0.0 && newOpPosition.X <= 500 && newOpPosition.Y <= 500 && Arena.GetPixel(Convert.ToInt32(newOpPosition.X), Convert.ToInt32(newOpPosition.Y)) == Colors.Black;
+            if (!felt1 && !felt2)
             {
                 Mover.Stop();
                 Lost = true;
-                MessageBox.Show("You lose!", "Game over");
+                Win = true;
+            }
+            else
+            {
+                if (felt1)
+                {
+                    Arena.DrawLine(Convert.ToInt32(Position.X.ToString()), Convert.ToInt32(Position.Y.ToString()), Convert.ToInt32(newPosition.X.ToString()), Convert.ToInt32(newPosition.Y.ToString()), MyColor);
+                    Position = newPosition;
+                }
+                else
+                {
+                    Mover.Stop();
+                    Lost = true;
+                }
+                if (felt2)
+                {
+                    Arena.DrawLine(Convert.ToInt32(OpponentPosition.X.ToString()), Convert.ToInt32(OpponentPosition.Y.ToString()), Convert.ToInt32(newOpPosition.X.ToString()), Convert.ToInt32(newOpPosition.Y.ToString()), OpponentColor);
+                    OpponentPosition = newOpPosition;
+                }
+                else
+                {
+                    Mover.Stop();
+                    Win = true;
+                }
             }
         }
 
@@ -101,11 +156,14 @@ namespace LineFight.model
 
         public void Start()
         {
+            Win = false;
+            Lost = false;
             Arena = BitmapFactory.New(500, 500);
             Arena.Clear(Colors.Black);
-            Arena.SetPixel(5, 5, MyColor);
-            Arena.SetPixel(495, 5, OpponentColor);
-            Position = new Point(5,5);
+            Arena.SetPixel(myPosX, myPosY, MyColor);
+            Arena.SetPixel(opPosX, opPosY, OpponentColor);
+            Position = new Point(myPosX, myPosY);
+            OpponentPosition = new Point(opPosX, opPosY);
             Mover = new DispatcherTimer();
             Mover.Interval = new TimeSpan(Speed);
             Mover.Tick += new EventHandler(Mover_Tick);            
