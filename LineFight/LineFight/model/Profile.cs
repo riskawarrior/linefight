@@ -13,9 +13,16 @@ public class Profile {
 	public BitmapImage Avatar
 	{
 		//read property
-		get;
+		get
+		{
+			if (AvatarImg == null)
+			{
+				
+			}
+			return AvatarImg;
+		}
 		//write property
-		set;
+		set {}
 	}
 	/// <summary>
 	/// Avatar képet alkotó byteok.

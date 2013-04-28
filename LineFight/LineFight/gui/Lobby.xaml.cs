@@ -11,6 +11,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using LineFight.model;
 using UniversalNetwork;
 
 namespace LineFight.gui {
@@ -18,19 +19,24 @@ namespace LineFight.gui {
 	/// Interaction logic for MainWindow.xaml
 	/// </summary>
 	public partial class Lobby : Window {
+		LFNet _lfnet;
+		Profile _profile;
 		public Lobby() {
 			InitializeComponent();
 		}
 
 		private void Window_Loaded(object sender, RoutedEventArgs e)
 		{
-			
-			
+			if (_profile == null)
+			{
+				ProfileWindow profile = new ProfileWindow();
+				profile.ShowDialog();
+			}
 		}
 
 		private void btnConnect_Click(object sender, RoutedEventArgs e)
 		{
-
+			_lfnet.connect(txtHost.Text, Convert.ToInt32(txtPort.Text), _profile.Username, pwPassword.Password, false);
 		}
 
 		private void btnCreateGame_Click(object sender, RoutedEventArgs e)
@@ -41,7 +47,7 @@ namespace LineFight.gui {
 
 		private void btnDisconnect_Click(object sender, RoutedEventArgs e)
 		{
-
+			_lfnet.disconnect();
 		}
 
 		private void btnProfile_Click(object sender, RoutedEventArgs e)
