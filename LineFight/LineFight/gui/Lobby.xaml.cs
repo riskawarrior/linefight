@@ -11,6 +11,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using UniversalNetwork;
 
 namespace LineFight.gui {
 	/// <summary>
@@ -21,11 +22,57 @@ namespace LineFight.gui {
 			InitializeComponent();
 		}
 
-        private void Window_Loaded(object sender, RoutedEventArgs e)
-        {
-            GameWindow g = new GameWindow();
-            g.Show();
-        }
+		private void Window_Loaded(object sender, RoutedEventArgs e)
+		{
+			
+			
+		}
 
+		private void btnConnect_Click(object sender, RoutedEventArgs e)
+		{
+
+		}
+
+		private void btnCreateGame_Click(object sender, RoutedEventArgs e)
+		{
+			GameWindow g = new GameWindow();
+			g.Show();
+		}
+
+		private void btnDisconnect_Click(object sender, RoutedEventArgs e)
+		{
+
+		}
+
+		private void btnProfile_Click(object sender, RoutedEventArgs e)
+		{
+			ProfileWindow profile = new ProfileWindow();
+			profile.ShowDialog();
+		}
+
+		private void pwPassword_PasswordChanged(object sender, RoutedEventArgs e)
+		{
+
+		}
+
+		private void btnExit_Click(object sender, RoutedEventArgs e)
+		{
+			this.Close();
+		}
+
+		private void NetClientEventHandler(object sender, NetClientEvent e)
+		{
+
+		}
+
+		private void NetCoreEventHandler(object sender, NetCoreError e)
+		{
+
+		}
+
+		private void NetPackageReceiveHandler(object sender, PackageReceived e)
+		{
+
+		}
 	}
 }

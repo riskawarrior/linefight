@@ -9,7 +9,8 @@ namespace LineFight.model {
 		Profile profile;
 		public LFNet(Profile prof)
 		{
-			profile = prof;
+			profile.Username = prof.Username;
+			profile.Avatar = prof.Avatar;
 		}
 		public void connect(string host, int port, string username, string password, bool isReconnect)
 		{

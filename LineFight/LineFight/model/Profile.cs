@@ -30,7 +30,8 @@ public class Profile {
 	/// <summary>
 	/// Serializable
 	/// </summary>
-	public string Username{
+	public string Username
+	{
 		//read property
 		get;
 		//write property
@@ -38,16 +39,17 @@ public class Profile {
 	}
 
 	public Profile(){
-
+		
 	}
 
 	/// <summary>
 	/// Inicializálja a profilt.
 	/// </summary>
-	/// <param name="username"></param>
-	/// <param name="avatar"></param>
+	/// <param name="username">Felhasználónév</param>
+	/// <param name="avatar">Profilkép</param>
 	public Profile(string username, BitmapImage avatar){
-
+		Username = username;
+		Avatar = avatar;
 	}
 
 }//end Profile

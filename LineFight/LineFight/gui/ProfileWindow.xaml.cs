@@ -20,6 +20,8 @@ namespace LineFight.gui
     public partial class ProfileWindow : Window
     {
         Profile profile;
+        OpenFileDialog _fileDialog;
+        BitmapImage _image;
         public ProfileWindow()
         {
             InitializeComponent();
@@ -27,13 +29,24 @@ namespace LineFight.gui
 
         private void btnClose_Click(object sender, RoutedEventArgs e)
         {
-
+            profile = new Profile(txtUserName.Text, _image) ;
+            this.Close();
         }
 
         private void btnOpenAvatar_Click(object sender, RoutedEventArgs e)
         {
-            OpenFileDialog dialog = new OpenFileDialog();
-            
+            _fileDialog = new OpenFileDialog();
+
+            if (_fileDialog.ShowDialog() == true)
+            {
+                _image = new BitmapImage(new Uri(_fileDialog.FileName, UriKind.RelativeOrAbsolute));
+                imgAvatar.Source = _image;
+            }
+        }
+
+        private void txtUserName_TextChanged(object sender, TextChangedEventArgs e)
+        {
+
         }
     }
 }
