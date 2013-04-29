@@ -7,10 +7,25 @@ using System.Windows.Media;
 using System.Windows.Threading;
 using System.Windows.Media.Imaging;
 using UniversalNetwork;
+using LineFight.gui;
 
 namespace LineFight.model
 {
     enum Facing { Up=0, Right=1, Down=2, Left=3 };
+    enum packNames { Facing, End};
+
+    [Serializable]
+    class Pack
+    {
+        public packNames packName { get; set; }
+        public object content { get; set; }
+
+        public Pack(packNames p, object o)
+        {
+            packName = p;
+            content = o;
+        }
+    }
 
     class Game
     {
@@ -30,6 +45,14 @@ namespace LineFight.model
         private int myPosY = 5;
         private int opPosX = 495;
         private int opPosY = 5;
+        private GameWindow gameWindow;
+
+        public Game(GameWindow gWindow)
+        {
+            gameWindow = gWindow;
+            Network.NetClientEvent +=new NetCore.NetClientEventHandler(NetClientEventHandler);
+            Network.ReceiveObservers += new NetCore.NetPackageReceiveHandler(NetPackageReceiveHandler);
+        }
 
         public WriteableBitmap getArena()
         {
@@ -113,6 +136,8 @@ namespace LineFight.model
                 Mover.Stop();
                 Lost = true;
                 Win = true;
+                Pack p = new Pack(packNames.End, "Draw");
+                Network.send(p);
             }
             else
             {
@@ -125,6 +150,8 @@ namespace LineFight.model
                 {
                     Mover.Stop();
                     Lost = true;
+                    Pack p = new Pack(packNames.End, "Lost");
+                    Network.send(p);
                 }
                 if (felt2)
                 {
@@ -135,27 +162,53 @@ namespace LineFight.model
                 {
                     Mover.Stop();
                     Win = true;
+                    Pack p = new Pack(packNames.End, "Win");
+                    Network.send(p);
                 }
             }
         }
 
         private void NetClientEventHandler(object o, NetClientEvent e)
         {
-        
+            if (e.ev == ClientEventType.disconnected)
+            {
+                gameWindow.opDisconnect();
+            }
         }
 
         private void NetPackageReceiveHandler(object o, PackageReceived pr)
-        { 
-        
+        {
+            if (((Pack)pr.pack).packName == packNames.Facing)
+            {
+                OpponentFacing = (Facing)((Pack)pr.pack).content;
+            }
+            else if (((Pack)pr.pack).packName == packNames.End)
+            {
+                if (((Pack)pr.pack).content == "Win")
+                {
+                    Win = false;
+                }
+                else if (((Pack)pr.pack).content == "Lost")
+                {
+                    Lost = false;
+                }
+                else
+                {
+                    Lost = true;
+                    Win = true;
+                }
+            }
         }
 
         private void SendFacing(Facing f)
         {
-            
+            Pack p = new Pack(packNames.Facing, f);
+            Network.send(p);
         }
 
         public void Start()
         {
+
             Win = false;
             Lost = false;
             Arena = BitmapFactory.New(500, 500);

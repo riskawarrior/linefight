@@ -23,5 +23,6 @@
             <Image Height="127" HorizontalAlignment="Left" Margin="13,21,0,0" Name="ImgOpponentProfile" Stretch="Fill" VerticalAlignment="Top" Width="107" Grid.Column="1" Source="/LineFight;component/profile.jpg" />
         </Grid>
         <Image Height="500" HorizontalAlignment="Left" Margin="268,0,0,0" Name="Arena" Stretch="Fill" VerticalAlignment="Top" Width="494" />
+        <Label Height="68" HorizontalAlignment="Left" Margin="453,148,0,0" Name="countDownlb" VerticalAlignment="Top" Width="125" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontWeight="Bold" FontStyle="Normal" FontStretch="Normal" FontSize="28" Foreground="Red"/>
     </Grid>
 </Window>

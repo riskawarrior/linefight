@@ -21,7 +21,7 @@ namespace LineFight.gui
         private LFNet Network;
         private Profile OpponentProfile;
         private DispatcherTimer Refresher;
-        private int Remaining;
+        private int Remaining = 6;
         private bool Replay;
 
         private void btnAbandon_Click(object o, RoutedEventArgs e)
@@ -30,9 +30,20 @@ namespace LineFight.gui
             this.Close();
         }
 
-        private void CountDown_Tick()
-        { 
-        
+        private void CountDown_Tick(object o, EventArgs e)
+        {
+            //int Remaining = Convert.ToInt32(countDownlb.Content.ToString());
+            if (Remaining > 0)
+            {
+                Remaining--;
+                countDownlb.Content = Remaining;
+            }
+            else
+            {
+                CountDown.Stop();
+                countDownlb.Visibility = System.Windows.Visibility.Hidden;
+                NewGame();
+            }
         }
 
         public GameWindow()
@@ -41,6 +52,10 @@ namespace LineFight.gui
             Refresher = new DispatcherTimer();
             Refresher.Interval = new TimeSpan(10);
             Refresher.Tick += new EventHandler(Refresher_Tick);
+            CountDown = new DispatcherTimer();
+            CountDown.Interval = new TimeSpan(10000000);
+            CountDown.Tick += new EventHandler(CountDown_Tick);
+            CountDown.Start();
             MyProfile = new Profile();
             OpponentProfile = new Profile();
             if (MyProfile.Username == null)
@@ -67,9 +82,6 @@ namespace LineFight.gui
             {
                 ImgOpponentProfile.Source = MyProfile.Avatar;
             }
-            NewGame();
-            
-
         }
 
         private void Window_KeyDown(object sender, KeyEventArgs e)
@@ -84,20 +96,10 @@ namespace LineFight.gui
             }
         }
 
-        private void NetClientEventHandler(object o, NetClientEvent e)
-        { 
-            
-        }
-
-        public void NetPackageReceiveHandler(object o, PackageReceived pr)
-        { 
-        
-        }
-
         public void NewGame()
         {
             Refresher.Start();
-            Controller = new Game();
+            Controller = new Game(this);
             Controller.Start();
             Arena.Source = Controller.getArena();
         }
@@ -129,6 +131,12 @@ namespace LineFight.gui
                     this.Close();
                 }
             }
+        }
+
+        public void opDisconnect()
+        {
+            MessageBox.Show("Opponent disconnected! You win.", "Game over");
+            this.Close();
         }
 
         private void newGameBtn_Click(object sender, RoutedEventArgs e)
