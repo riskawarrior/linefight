@@ -11,7 +11,7 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="11*" />
         </Grid.RowDefinitions>
-        <Button Content="Kilépés" Height="23" HorizontalAlignment="Left" Margin="406,276,0,0" Name="btnExit" VerticalAlignment="Top" Width="75" Click="btnExit_Click" />
+        <Button Content="Kilépés" Height="23" HorizontalAlignment="Left" Margin="387,266,0,0" Name="btnExit" VerticalAlignment="Top" Width="75" Click="btnExit_Click" />
         <Button Content="Connect" Height="23" HorizontalAlignment="Left" Margin="68,114,0,0" Name="btnConnect" VerticalAlignment="Top" Width="75" Click="btnConnect_Click" />
         <TextBlock Height="23" HorizontalAlignment="Left" Margin="12,23,0,0" Name="lblHost" Text="Host:" VerticalAlignment="Top" />
         <TextBlock Height="19" HorizontalAlignment="Left" Margin="12,52,0,0" Name="lblPort" Text="Port:" VerticalAlignment="Top" />
@@ -19,8 +19,8 @@
         <TextBox Height="23" HorizontalAlignment="Left" Margin="68,20,0,0" Name="txtHost" VerticalAlignment="Top" Width="120" />
         <TextBox Height="23" HorizontalAlignment="Left" Margin="68,48,0,0" Name="txtPort" VerticalAlignment="Top" Width="40" />
         <PasswordBox Height="23" HorizontalAlignment="Left" Margin="68,76,0,0" Name="pwPassword" VerticalAlignment="Top" Width="120" PasswordChanged="pwPassword_PasswordChanged" />
-        <Button Content="Disconnect" Height="23" HorizontalAlignment="Left" Margin="169,114,0,0" Name="btnDisconnect" VerticalAlignment="Top" Width="75" Click="btnDisconnect_Click" />
-        <Button Content="Create Game" Height="23" HorizontalAlignment="Left" Margin="33,177,0,0" Name="btnCreateGame" VerticalAlignment="Top" Width="75" Click="btnCreateGame_Click" />
-        <Button Content="Create Profile" Height="23" HorizontalAlignment="Left" Margin="33,221,0,0" Name="btnProfile" VerticalAlignment="Top" Width="88" Click="btnProfile_Click" />
+        <Button Content="Disconnect" Height="23" HorizontalAlignment="Left" Margin="253,114,0,0" Name="btnDisconnect" VerticalAlignment="Top" Width="75" Click="btnDisconnect_Click" IsEnabled="False" />
+        <Button Content="Create Game" Height="23" HorizontalAlignment="Left" Margin="159,114,0,0" Name="btnCreateGame" VerticalAlignment="Top" Width="88" Click="btnCreateGame_Click" />
+        <Button Content="Modify Profile" Height="23" HorizontalAlignment="Left" Margin="55,179,0,0" Name="btnProfile" VerticalAlignment="Top" Width="88" Click="btnProfile_Click" />
     </Grid>
 </Window>

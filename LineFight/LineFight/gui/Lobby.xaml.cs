@@ -14,71 +14,75 @@ using System.Windows.Shapes;
 using LineFight.model;
 using UniversalNetwork;
 
-namespace LineFight.gui {
-	/// <summary>
-	/// Interaction logic for MainWindow.xaml
-	/// </summary>
-	public partial class Lobby : Window {
-		LFNet _lfnet;
-		Profile _profile;
-		public Lobby() {
-			InitializeComponent();
-		}
+namespace LineFight.gui
+{
+    /// <summary>
+    /// Interaction logic for MainWindow.xaml
+    /// </summary>
+    public partial class Lobby : Window
+    {
+        LFNet _lfnet;
+        Profile _profile;
+        public Lobby()
+        {
+            InitializeComponent();
+            _lfnet.NetClientEvent += new NetCore.NetClientEventHandler(NetClientEventHandler);
+            _lfnet.NetError += new NetCore.NetCoreErrorHandler(NetCoreEventHandler);
+            _lfnet.ReceiveObservers += new NetCore.NetPackageReceiveHandler(NetPackageReceiveHandler);
+        }
 
-		private void Window_Loaded(object sender, RoutedEventArgs e)
-		{
-			if (_profile == null)
-			{
-				ProfileWindow profile = new ProfileWindow();
-				profile.ShowDialog();
-			}
-		}
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            _profile = new Profile("",new BitmapImage());
+            ProfileWindow profile = new ProfileWindow(_profile);
+            profile.ShowDialog();
+        }
 
-		private void btnConnect_Click(object sender, RoutedEventArgs e)
-		{
-			_lfnet.connect(txtHost.Text, Convert.ToInt32(txtPort.Text), _profile.Username, pwPassword.Password, false);
-		}
+        private void btnConnect_Click(object sender, RoutedEventArgs e)
+        {
+            _lfnet.connect(txtHost.Text, Convert.ToInt32(txtPort.Text), _profile.Username, pwPassword.Password);
+        }
 
-		private void btnCreateGame_Click(object sender, RoutedEventArgs e)
-		{
-			GameWindow g = new GameWindow();
-			g.Show();
-		}
+        private void btnCreateGame_Click(object sender, RoutedEventArgs e)
+        {
+            _lfnet.openServer(_profile.Username, Convert.ToInt32(txtPort.Text));
+        }
 
-		private void btnDisconnect_Click(object sender, RoutedEventArgs e)
-		{
-			_lfnet.disconnect();
-		}
+        private void btnDisconnect_Click(object sender, RoutedEventArgs e)
+        {
+            _lfnet.disconnect();
+        }
 
-		private void btnProfile_Click(object sender, RoutedEventArgs e)
-		{
-			ProfileWindow profile = new ProfileWindow();
-			profile.ShowDialog();
-		}
+        private void btnProfile_Click(object sender, RoutedEventArgs e)
+        {
+            ProfileWindow profile = new ProfileWindow(_profile);
+            profile.ShowDialog();
+        }
 
-		private void pwPassword_PasswordChanged(object sender, RoutedEventArgs e)
-		{
+        private void pwPassword_PasswordChanged(object sender, RoutedEventArgs e)
+        {
+            _lfnet.setPassword(pwPassword.Password);
 
-		}
+        }
 
-		private void btnExit_Click(object sender, RoutedEventArgs e)
-		{
-			this.Close();
-		}
+        private void btnExit_Click(object sender, RoutedEventArgs e)
+        {
+            this.Close();
+        }
 
-		private void NetClientEventHandler(object sender, NetClientEvent e)
-		{
+        private void NetClientEventHandler(object sender, NetClientEvent e)
+        {
+            //e.ev == ClientEventType.
+        }
 
-		}
+        private void NetCoreEventHandler(object sender, NetCoreError e)
+        {
+            MessageBox.Show(e.error, "Hiba!", MessageBoxButton.OK);
+        }
 
-		private void NetCoreEventHandler(object sender, NetCoreError e)
-		{
+        private void NetPackageReceiveHandler(object sender, PackageReceived e)
+        {
 
-		}
-
-		private void NetPackageReceiveHandler(object sender, PackageReceived e)
-		{
-
-		}
-	}
+        }
+    }
 }

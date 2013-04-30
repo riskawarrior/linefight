@@ -9,17 +9,17 @@ namespace LineFight.model {
 		Profile profile;
 		public LFNet(Profile prof):base()
 		{
-			profile.Username = prof.Username;
-			profile.Avatar = prof.Avatar;
+			profile = prof;
 		}
-		public void connect(string host, int port, string username, string password, bool isReconnect)
+		public void connect(string host, int port, string username, string password)
 		{
-			base.connect(host, port, username, password, isReconnect);
+			base.connect(host, port, username, password);
 		}
 
 		protected bool preProcessData(object package, Socket client)
 		{
 			return base.preProcessData(package, client);
+			//this.send()
 		}
 	}
 }
