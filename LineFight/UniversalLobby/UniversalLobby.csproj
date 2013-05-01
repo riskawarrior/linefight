@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{7D2ABD89-CC75-400D-911C-0435E806A700}</ProjectGuid>
+    <ProjectGuid>{EABEAC96-C69C-4F08-8CA2-344DFF4FEE7E}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>LineFight</RootNamespace>
-    <AssemblyName>LineFight</AssemblyName>
+    <RootNamespace>UniversalLobby</RootNamespace>
+    <AssemblyName>UniversalLobby</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -42,37 +42,43 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
     <Reference Include="WindowsBase" />
-    <Reference Include="WriteableBitmapEx.Wpf">
-      <HintPath>Resources\WriteableBitmapEx.Wpf.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="gui\GameWindow.xaml.cs">
-      <SubType>Code</SubType>
-      <DependentUpon>GameWindow.xaml</DependentUpon>
+    <Compile Include="gui\ConfirmReady.xaml.cs">
+      <DependentUpon>ConfirmReady.xaml</DependentUpon>
     </Compile>
-    <Compile Include="model\Game.cs" />
+    <Compile Include="gui\Lobby.xaml.cs">
+      <DependentUpon>Lobby.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="gui\ProfileWindow.xaml.cs">
+      <DependentUpon>ProfileWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="iface\IUGame.cs" />
+    <Compile Include="model\LFNet.cs" />
+    <Compile Include="model\Profile.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\UniversalLobby\UniversalLobby.csproj">
-      <Project>{eabeac96-c69c-4f08-8ca2-344dff4fee7e}</Project>
-      <Name>UniversalLobby</Name>
-    </ProjectReference>
+    <Page Include="gui\ConfirmReady.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="gui\Lobby.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="gui\ProfileWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\UniversalNetwork\UniversalNetwork.csproj">
       <Project>{4524be6c-d871-42c2-a614-adc6dbea159b}</Project>
       <Name>UniversalNetwork</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Page Include="gui\GameWindow.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Resources\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

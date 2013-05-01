@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Net.Sockets;
 
-namespace LineFight.model {
+namespace UniversalLobby.model {
 	public class LFNet : UniversalNetwork.NetCore {
 		Profile profile;
 		public LFNet(Profile prof):base()

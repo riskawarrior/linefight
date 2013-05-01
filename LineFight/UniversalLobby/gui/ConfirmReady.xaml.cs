@@ -12,9 +12,9 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using System.Windows.Threading;
 
-using LineFight.model;
+using UniversalLobby.model;
 
-namespace LineFight.gui {
+namespace UniversalLobby.gui {
 	/// <summary>
 	/// Interaction logic for ConfirmReady.xaml
 	/// </summary>

@@ -1,4 +1,4 @@
-﻿<Window x:Class="LineFight.gui.ProfileWindow"
+﻿<Window x:Class="UniversalLobby.gui.ProfileWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Profil" Height="300" Width="300" Closing="Window_Closing">

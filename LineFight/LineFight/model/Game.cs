@@ -6,8 +6,10 @@ using System.Windows;
 using System.Windows.Media;
 using System.Windows.Threading;
 using System.Windows.Media.Imaging;
-using UniversalNetwork;
+
 using LineFight.gui;
+using UniversalNetwork;
+using UniversalLobby.model;
 
 namespace LineFight.model
 {
@@ -50,8 +52,8 @@ namespace LineFight.model
         public Game(GameWindow gWindow)
         {
             gameWindow = gWindow;
-            Network.NetClientEvent +=new NetCore.NetClientEventHandler(NetClientEventHandler);
-            Network.ReceiveObservers += new NetCore.NetPackageReceiveHandler(NetPackageReceiveHandler);
+            //Network.NetClientEvent +=new NetCore.NetClientEventHandler(NetClientEventHandler);
+            //Network.ReceiveObservers += new NetCore.NetPackageReceiveHandler(NetPackageReceiveHandler);
         }
 
         public WriteableBitmap getArena()
@@ -137,7 +139,7 @@ namespace LineFight.model
                 Lost = true;
                 Win = true;
                 Pack p = new Pack(packNames.End, "Draw");
-                Network.send(p);
+                //Network.send(p);
             }
             else
             {
