@@ -48,50 +48,53 @@ namespace LineFight.gui
 			}
 		}
 
-		public void run() {
-
+		public void run() 
+        {
+            CountDown.Start();
+            NewGame();
 		}
 
-		public void initialize(UniversalLobby.model.LFNet network, UniversalLobby.model.Profile profile) {
-
+		public void initialize(UniversalLobby.model.LFNet network, UniversalLobby.model.Profile profile)
+        {
+            Network = network;
+            MyProfile = profile;
+            Refresher = new DispatcherTimer();
+            Refresher.Interval = new TimeSpan(10);
+            Refresher.Tick += new EventHandler(Refresher_Tick);
+            CountDown = new DispatcherTimer();
+            CountDown.Interval = new TimeSpan(10000000);
+            CountDown.Tick += new EventHandler(CountDown_Tick);
+            OpponentProfile = new Profile("BBB", new BitmapImage());
+            if (MyProfile.Username == null)
+            {
+                playerNamelb.Content = "Me";
+            }
+            else
+            {
+                playerNamelb.Content = MyProfile.Username;
+            }
+            if (OpponentProfile.Username == null)
+            {
+                opponentNamelb.Content = "Opponent";
+            }
+            else
+            {
+                opponentNamelb.Content = OpponentProfile.Username;
+            }
+            if (MyProfile.Avatar != null)
+            {
+                ImgMyProfile.Source = MyProfile.Avatar;
+            }
+            if (OpponentProfile.Avatar != null)
+            {
+                ImgOpponentProfile.Source = MyProfile.Avatar;
+            }
 		}
 
 		public GameWindow()
 		{
 			InitializeComponent();
-			Refresher = new DispatcherTimer();
-			Refresher.Interval = new TimeSpan(10);
-			Refresher.Tick += new EventHandler(Refresher_Tick);
-			CountDown = new DispatcherTimer();
-			CountDown.Interval = new TimeSpan(10000000);
-			CountDown.Tick += new EventHandler(CountDown_Tick);
-			CountDown.Start();
-			MyProfile = new Profile("AAA", new BitmapImage());
-			OpponentProfile = new Profile("BBB", new BitmapImage());
-			if (MyProfile.Username == null)
-			{
-				playerNamelb.Content = "Me";
-			}
-			else
-			{
-				playerNamelb.Content = MyProfile.Username;
-			}
-			if (OpponentProfile.Username == null)
-			{
-				opponentNamelb.Content = "Opponent";
-			}
-			else
-			{
-				opponentNamelb.Content = OpponentProfile.Username;
-			}
-			if (MyProfile.Avatar != null)
-			{
-				ImgMyProfile.Source = MyProfile.Avatar;
-			}
-			if (OpponentProfile.Avatar != null)
-			{
-				ImgOpponentProfile.Source = MyProfile.Avatar;
-			}
+			
 		}
 
 		private void Window_KeyDown(object sender, KeyEventArgs e)
