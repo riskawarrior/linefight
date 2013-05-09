@@ -14,7 +14,7 @@ using UniversalLobby.model;
 namespace LineFight.model
 {
     enum Facing { Up=0, Right=1, Down=2, Left=3 };
-    enum packNames { Facing, End};
+    enum packNames { Facing, End, Number};
 
     [Serializable]
     class Pack
@@ -43,11 +43,14 @@ namespace LineFight.model
         private Point OpponentPosition;
         private int Speed = 10;
         private bool Win = false;
-        private int myPosX = 5;
-        private int myPosY = 5;
-        private int opPosX = 495;
-        private int opPosY = 5;
+        private int myPosX;
+        private int myPosY;
+        private int opPosX;
+        private int opPosY;
+        private Point firstPlayerCoord = new Point(5, 5);
+        private Point secondPlayerCoord = new Point(495, 5);
         private GameWindow gameWindow;
+        private int number = 0;
 
         public Game(GameWindow gWindow)
         {
@@ -201,6 +204,20 @@ namespace LineFight.model
                     Win = true;
                 }
             }
+            else if (((Pack)pr.pack).packName == packNames.Number)
+            {
+                if (Convert.ToInt32(((Pack)pr.pack).content) == 2)
+                {
+                    Position = firstPlayerCoord;
+                    OpponentPosition = secondPlayerCoord;
+                }
+                else
+                {
+                    Position = secondPlayerCoord;
+                    OpponentPosition = firstPlayerCoord;
+                }
+                GameStart();
+            }
         }
 
         private void SendFacing(Facing f)
@@ -211,17 +228,38 @@ namespace LineFight.model
 
         public void Start()
         {
+            Random rand = new Random();
+            if (Network.isServer()) {
+                int r = rand.Next(1000);
+                if (r < 500) {
+                    Pack p = new Pack(packNames.Number, 1);
+                    Network.send(p);
+                    Position = firstPlayerCoord;
+                    OpponentPosition = secondPlayerCoord;
+                } else {
+                    Pack p = new Pack(packNames.Number, 2);
+                    Network.send(p);
+                    Position = secondPlayerCoord;
+                    OpponentPosition = firstPlayerCoord;
+                }
+                GameStart();
+            }
+
             Win = false;
             Lost = false;
             Arena = BitmapFactory.New(500, 500);
             Arena.Clear(Colors.Black);
+        }
+
+        public void GameStart()
+        {
             Arena.SetPixel(myPosX, myPosY, MyColor);
             Arena.SetPixel(opPosX, opPosY, OpponentColor);
             Position = new Point(myPosX, myPosY);
             OpponentPosition = new Point(opPosX, opPosY);
             Mover = new DispatcherTimer();
             Mover.Interval = new TimeSpan(Speed);
-            Mover.Tick += new EventHandler(Mover_Tick);            
+            Mover.Tick += new EventHandler(Mover_Tick);
             Mover.Start();
         }
 
