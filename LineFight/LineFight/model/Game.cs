@@ -52,8 +52,9 @@ namespace LineFight.model
         public Game(GameWindow gWindow)
         {
             gameWindow = gWindow;
-            //Network.NetClientEvent +=new NetCore.NetClientEventHandler(NetClientEventHandler);
-            //Network.ReceiveObservers += new NetCore.NetPackageReceiveHandler(NetPackageReceiveHandler);
+            Network = gWindow.getNetwork();
+            Network.NetClientEvent +=new NetCore.NetClientEventHandler(NetClientEventHandler);
+            Network.ReceiveObservers += new NetCore.NetPackageReceiveHandler(NetPackageReceiveHandler);
         }
 
         public WriteableBitmap getArena()
@@ -139,7 +140,7 @@ namespace LineFight.model
                 Lost = true;
                 Win = true;
                 Pack p = new Pack(packNames.End, "Draw");
-                //Network.send(p);
+                Network.send(p);
             }
             else
             {
@@ -210,7 +211,6 @@ namespace LineFight.model
 
         public void Start()
         {
-
             Win = false;
             Lost = false;
             Arena = BitmapFactory.New(500, 500);

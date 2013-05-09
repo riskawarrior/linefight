@@ -48,6 +48,11 @@ namespace LineFight.gui
 			}
 		}
 
+        public LFNet getNetwork()
+        {
+            return Network;
+        }
+
 		public void run() 
         {
             CountDown.Start();
@@ -58,13 +63,13 @@ namespace LineFight.gui
         {
             Network = network;
             MyProfile = profile;
+            OpponentProfile = new Profile("BBB", new BitmapImage()); //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
             Refresher = new DispatcherTimer();
             Refresher.Interval = new TimeSpan(10);
             Refresher.Tick += new EventHandler(Refresher_Tick);
             CountDown = new DispatcherTimer();
             CountDown.Interval = new TimeSpan(10000000);
             CountDown.Tick += new EventHandler(CountDown_Tick);
-            OpponentProfile = new Profile("BBB", new BitmapImage());
             if (MyProfile.Username == null)
             {
                 playerNamelb.Content = "Me";
