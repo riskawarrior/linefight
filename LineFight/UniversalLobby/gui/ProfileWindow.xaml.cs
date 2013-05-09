@@ -33,30 +33,22 @@ namespace UniversalLobby.gui
 
 		private void btnClose_Click(object sender, RoutedEventArgs e)
 		{
-			ClosingWindow(true);
-		}
-
-		private bool ClosingWindow(bool useClose)
-		{
-			bool yesorno=false;
 			if (txtUserName.Text == "")
 			{
-				var answer = MessageBox.Show("Biztos, hogy ki akarsz lépni?", "Kilépés", MessageBoxButton.OKCancel, MessageBoxImage.Question);
-				if (answer == MessageBoxResult.OK)
-				{
-					Application.Current.Shutdown();
-				}
-				else
-				{
-					yesorno = true;
-				}
+				this.Close();
 			}
 			else
 			{
 				_profile.Username = txtUserName.Text;
 				_profile.Avatar = _image;
-				if (useClose) this.Close();
+				this.Close();
 			}
+		}
+
+		private bool ClosingWindow(bool useClose)
+		{
+			bool yesorno=false;
+			
 			return yesorno;
 		}
 
@@ -74,12 +66,24 @@ namespace UniversalLobby.gui
 
 		private void txtUserName_TextChanged(object sender, TextChangedEventArgs e)
 		{
-
+			_profile.Username = txtUserName.Text;
 		}
 
 		private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
 		{
-			e.Cancel = ClosingWindow(false);
+			if (txtUserName.Text == "")
+			{
+				var answer = MessageBox.Show("Username is missing. Are you sure to exit?", "Exiting", MessageBoxButton.OKCancel, MessageBoxImage.Question);
+				if (answer == MessageBoxResult.OK)
+				{
+					e.Cancel = false;
+				}
+				else
+				{
+					e.Cancel = true;
+				}
+			}
+			
 		}
 	}
 }

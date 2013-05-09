@@ -9,7 +9,7 @@
         <Border BorderThickness="2" >
             <Image Height="92" HorizontalAlignment="Left" Margin="74,59,0,0" Name="imgAvatar" Stretch="Fill" VerticalAlignment="Top" Width="87" />
         </Border>
-        <Button Content="Tallóz" Height="23" HorizontalAlignment="Left" Margin="74,170,0,0" Name="btnOpenAvatar" VerticalAlignment="Top" Width="75" Click="btnOpenAvatar_Click" />
+        <Button Content="Browse" Height="23" HorizontalAlignment="Left" Margin="74,170,0,0" Name="btnOpenAvatar" VerticalAlignment="Top" Width="75" Click="btnOpenAvatar_Click" />
         <Button Content="Save" Height="23" HorizontalAlignment="Left" Margin="183,226,0,0" Name="btnClose" VerticalAlignment="Top" Width="75" DataContext="{Binding}" Click="btnClose_Click" />
 
     </Grid>
