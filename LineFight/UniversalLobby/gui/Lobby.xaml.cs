@@ -147,7 +147,14 @@ namespace UniversalLobby.gui
 		{
 			if (((Profile)e.pack).Username != _profile.Username)
 			{
-				
+                if (_lfnet.isServer())
+                {
+                    _lfnet.sendTo(_profile, ((Profile)e.pack).Username);
+                }
+                else
+                {
+                    _lfnet.send(_profile);
+                }
 			}
 		}
 	}
