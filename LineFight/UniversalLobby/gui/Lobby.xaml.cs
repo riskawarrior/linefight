@@ -51,12 +51,11 @@ namespace UniversalLobby.gui
 			{
 				if (!String.IsNullOrEmpty(txtHost.Text) && !String.IsNullOrEmpty(txtPort.Text))
 				{
-					_lfnet.connect(txtHost.Text, Convert.ToInt32(txtPort.Text), _profile.Username, pwPassword.Password);
 					btnConnect.IsEnabled = false;
+					btnCreateGame.IsEnabled = false;
 					btnDisconnect.IsEnabled = true;
-
-					game.initialize(_lfnet, _profile);
-					game.run();
+					_lfnet.connect(txtHost.Text, Int32.Parse(txtPort.Text), _profile.Username, pwPassword.Password);
+					
 				}
 				else
 				{
@@ -74,19 +73,25 @@ namespace UniversalLobby.gui
 		{
 			if (_profile.Username != "")
 			{
+				btnConnect.IsEnabled = false;
+				btnCreateGame.IsEnabled = false;
+				btnDisconnect.IsEnabled = true;
 				_lfnet.openServer(_profile.Username);
+				
 			}
 			else
 			{
 				ProfileWindow profile = new ProfileWindow(_profile);
 				profile.ShowDialog();
 			}
+			
 		}
 
 		private void btnDisconnect_Click(object sender, RoutedEventArgs e)
 		{
 			_lfnet.disconnect();
 			btnConnect.IsEnabled = true;
+			btnCreateGame.IsEnabled = true;
 			btnDisconnect.IsEnabled = false;
 		}
 
@@ -111,7 +116,17 @@ namespace UniversalLobby.gui
 		{
 			if (e.ev == ClientEventType.connected)
 			{
-				//_lfnet.send()
+				if (_lfnet.isServer() && _lfnet.getClientNames().Length > 1)
+				{
+					_lfnet.kick(e.username);
+				}
+				else
+				{
+					_lfnet.send(_profile);
+					game.initialize(_lfnet, _profile);
+					game.run();
+				}
+				
 			}
 			else if (e.ev == ClientEventType.disconnected)
 			{
@@ -123,11 +138,17 @@ namespace UniversalLobby.gui
 		private void NetCoreEventHandler(object sender, NetCoreError e)
 		{
 			MessageBox.Show(e.error, "Hiba!", MessageBoxButton.OK);
+			btnConnect.IsEnabled = true;
+			btnCreateGame.IsEnabled = true;
+			btnDisconnect.IsEnabled = false;
 		}
 
 		private void NetPackageReceiveHandler(object sender, PackageReceived e)
 		{
-			
+			if (((Profile)e.pack).Username != _profile.Username)
+			{
+				
+			}
 		}
 	}
 }
