@@ -18,13 +18,11 @@ namespace LineFight.gui
 	{
 		private Game Controller;
 		private DispatcherTimer CountDown;
-		private Label lblCountdown;
 		private Profile MyProfile;
 		private LFNet Network;
 		private Profile OpponentProfile;
 		private DispatcherTimer Refresher;
 		private int Remaining = 6;
-		private bool Replay;
 
 		private void btnAbandon_Click(object o, RoutedEventArgs e)
 		{
@@ -44,6 +42,8 @@ namespace LineFight.gui
 			{
 				CountDown.Stop();
 				countDownlb.Visibility = System.Windows.Visibility.Hidden;
+                Controller.Start();
+                Arena.Source = Controller.getArena();
 				NewGame();
 			}
 		}
@@ -65,7 +65,7 @@ namespace LineFight.gui
 			MyProfile = profile;
 			OpponentProfile = Network.getOpponentProfile();
 			Refresher = new DispatcherTimer();
-			Refresher.Interval = new TimeSpan(10);
+			Refresher.Interval = new TimeSpan(100);
 			Refresher.Tick += new EventHandler(Refresher_Tick);
 			CountDown = new DispatcherTimer();
 			CountDown.Interval = new TimeSpan(10000000);
@@ -116,10 +116,9 @@ namespace LineFight.gui
 
 		public void NewGame()
 		{
+            this.Show();
 			Refresher.Start();
 			Controller = new Game(this);
-			Controller.Start();
-			Arena.Source = Controller.getArena();
 		}
 
 		private void Refresher_Tick(object o, EventArgs e)
@@ -153,8 +152,8 @@ namespace LineFight.gui
 
 		public void opDisconnect()
 		{
+            this.Hide();
 			MessageBox.Show("Opponent disconnected! You win.", "Game over");
-			this.Close();
 		}
 
 		private void newGameBtn_Click(object sender, RoutedEventArgs e)

@@ -492,12 +492,12 @@ namespace UniversalNetwork {
 						ppack.message = "Wrong password!";
 						sendTo((object)ppack, client);
 						disconnect(client);
-					} else if (clientnames.ContainsKey(ppack.username) || username == ppack.username) {
+					} /*else if (clientnames.ContainsKey(ppack.username) || username == ppack.username) {
 						ppack.accepted = false;
 						ppack.message = "Your username has been taken already!";
 						sendTo((object)ppack, client);
 						disconnect(client);
-					} else {
+					}*/ else {
 						ppack.accepted = true;
 						clientnames.Add(ppack.username, client);
 						dispatchClientEvent(new NetClientEvent(ClientEventType.connected, ppack.username));

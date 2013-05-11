@@ -43,14 +43,9 @@ namespace LineFight.model
         private Point OpponentPosition;
         private int Speed = 10;
         private bool Win = false;
-        private int myPosX;
-        private int myPosY;
-        private int opPosX;
-        private int opPosY;
         private Point firstPlayerCoord = new Point(5, 5);
         private Point secondPlayerCoord = new Point(495, 5);
         private GameWindow gameWindow;
-        private int number = 0;
 
         public Game(GameWindow gWindow)
         {
@@ -190,11 +185,11 @@ namespace LineFight.model
             }
             else if (((Pack)pr.pack).packName == packNames.End)
             {
-                if (((Pack)pr.pack).content == "Win")
+                if (((Pack)pr.pack).content.ToString() == "Win")
                 {
                     Win = false;
                 }
-                else if (((Pack)pr.pack).content == "Lost")
+                else if (((Pack)pr.pack).content.ToString() == "Lost")
                 {
                     Lost = false;
                 }
@@ -228,6 +223,11 @@ namespace LineFight.model
 
         public void Start()
         {
+            Win = false;
+            Lost = false;
+            Arena = BitmapFactory.New(500, 500);
+            Arena.Clear(Colors.Black);
+
             Random rand = new Random();
             if (Network.isServer()) {
                 int r = rand.Next(1000);
@@ -242,21 +242,14 @@ namespace LineFight.model
                     Position = secondPlayerCoord;
                     OpponentPosition = firstPlayerCoord;
                 }
+                GameStart();
             }
-
-            Win = false;
-            Lost = false;
-            Arena = BitmapFactory.New(500, 500);
-            Arena.Clear(Colors.Black);
-            GameStart();
         }
 
         public void GameStart()
         {
-            Arena.SetPixel(myPosX, myPosY, MyColor);
-            Arena.SetPixel(opPosX, opPosY, OpponentColor);
-            Position = new Point(myPosX, myPosY);
-            OpponentPosition = new Point(opPosX, opPosY);
+            Arena.SetPixel(Convert.ToInt32(Position.X), Convert.ToInt32(Position.Y), MyColor);
+            Arena.SetPixel(Convert.ToInt32(OpponentPosition.X), Convert.ToInt32(OpponentPosition.Y), OpponentColor);
             Mover = new DispatcherTimer();
             Mover.Interval = new TimeSpan(Speed);
             Mover.Tick += new EventHandler(Mover_Tick);
