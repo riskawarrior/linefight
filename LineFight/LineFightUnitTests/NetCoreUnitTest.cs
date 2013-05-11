@@ -9,6 +9,19 @@ namespace LineFightUnitTests
     [TestClass]
     public class NetCoreUnitTest : UniversalNetwork.NetCore
     {
+
+        // A tesztekhez szükséges adattagok
+        NetCore testClient; // a NetCoreUnitTest maga egy szerver lesz, ez lesz a kliens
+
+
+        /// <summary>
+        /// Konstruktor a tesztesetekhez szükséges adattagok incializálásához.
+        /// </summary>
+        public NetCoreUnitTest()
+        {
+            testClient = new NetCore();
+        }
+
         /// <summary>
         /// Nem létező kapcsolat tesztelése.
         /// </summary>
@@ -65,5 +78,55 @@ namespace LineFightUnitTests
         {
             Assert.AreEqual(0, getClientNames(false).Length);
         }
+
+        /// <summary>
+        /// Szerver indítása, isServer tesztelése létező kapcsolat esetén.
+        /// </summary>
+        [TestMethod]
+        public void Test_NC_006_openServer_isServer_hasConnection()
+        {
+            openServer("test_server");
+            Assert.AreEqual(true, isServer());
+            Assert.AreEqual(true, hasConnection());
+        }
+
+        /// <summary>
+        /// Szerver mód esetén az isClient függvény tesztelése.
+        /// </summary>
+        [TestMethod]
+        public void Test_NC_007_isClient()
+        {
+            Assert.AreEqual(false, isClient());
+        }
+
+        /// <summary>
+        /// A kliens oldali connect és isClient eljárás tesztelése
+        /// </summary>
+        [TestMethod]
+        public void Test_NC_008_connect_isClient()
+        {
+            testClient.connect(getMyIp(), 33555, "test_client", "test_password");
+            Assert.AreEqual(true, testClient.isClient());
+            Assert.AreEqual(false, testClient.isServer());
+        }
+
+        /// <summary>
+        /// Létező kliens kapcsolat esetén az isServer tesztelése.
+        /// </summary>
+        [TestMethod]
+        public void Test_NC_009_isServer()
+        {
+            Assert.AreEqual(false, testClient.isServer());
+        }
+
+        /// <summary>
+        /// Létező kliens kapcsolat esetén az isServer tesztelése.
+        /// </summary>
+        [TestMethod]
+        public void Test_NC_010_hasConnection()
+        {
+            Assert.AreEqual(false, testClient.hasConnection());
+        }
+
     }
 }
