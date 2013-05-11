@@ -23,6 +23,12 @@ namespace LineFight.gui
 		private Profile OpponentProfile;
 		private DispatcherTimer Refresher;
 		private int Remaining = 6;
+        private bool replay = false;
+
+        public bool getReplay()
+        {
+            return replay;
+        }
 
 		private void btnAbandon_Click(object o, RoutedEventArgs e)
 		{
@@ -40,6 +46,7 @@ namespace LineFight.gui
 			}
 			else
 			{
+                Controller = new Game(this);
 				CountDown.Stop();
 				countDownlb.Visibility = System.Windows.Visibility.Hidden;
                 Controller.Start();
@@ -55,8 +62,8 @@ namespace LineFight.gui
 
 		public void run() 
 		{
+            this.Show();
 			CountDown.Start();
-			NewGame();
 		}
 
 		public void initialize(UniversalLobby.model.LFNet network, UniversalLobby.model.Profile profile)
@@ -92,7 +99,7 @@ namespace LineFight.gui
 			}
 			if (OpponentProfile.Avatar != null)
 			{
-				ImgOpponentProfile.Source = MyProfile.Avatar;
+				ImgOpponentProfile.Source = OpponentProfile.Avatar;
 			}
 		}
 
@@ -116,9 +123,7 @@ namespace LineFight.gui
 
 		public void NewGame()
 		{
-            this.Show();
 			Refresher.Start();
-			Controller = new Game(this);
 		}
 
 		private void Refresher_Tick(object o, EventArgs e)
@@ -139,12 +144,15 @@ namespace LineFight.gui
 					result = MessageBox.Show("You win! Wanna play again?", "Game over", MessageBoxButton.YesNo);
 				}
 				Refresher.Stop();
-				if (result == MessageBoxResult.Yes /*&& opponentAnswer == "yes"*/)
+				if (result == MessageBoxResult.Yes)
 				{
-					NewGame();
+                    Pack p = new Pack(packNames.Replay, "Yes");
+                    Network.send(p);
 				}
 				else
 				{
+                    Pack p = new Pack(packNames.Replay, "No");
+                    Network.send(p);
 					this.Close();
 				}
 			}
@@ -158,7 +166,13 @@ namespace LineFight.gui
 
 		private void newGameBtn_Click(object sender, RoutedEventArgs e)
 		{
-			NewGame();
+            Replay();
 		}
+
+        public void Replay()
+        {
+            initialize(Network, MyProfile);
+            run();
+        }
 	}
 }

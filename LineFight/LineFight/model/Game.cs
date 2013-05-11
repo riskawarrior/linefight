@@ -14,7 +14,7 @@ using UniversalLobby.model;
 namespace LineFight.model
 {
     enum Facing { Up=0, Right=1, Down=2, Left=3 };
-    enum packNames { Facing, End, Number};
+    enum packNames { Facing, End, Replay};
 
     [Serializable]
     class Pack
@@ -35,9 +35,9 @@ namespace LineFight.model
         private Facing Facing = Facing.Down;
         private bool Lost = false;
         private DispatcherTimer Mover;
-        private Color MyColor = Colors.Blue;
+        private Color MyColor;
         private LFNet Network;
-        private Color OpponentColor = Colors.Red;
+        private Color OpponentColor;
         private Facing OpponentFacing = Facing.Down;
         private Point Position;
         private Point OpponentPosition;
@@ -199,20 +199,18 @@ namespace LineFight.model
                     Win = true;
                 }
             }
-            else if (((Pack)pr.pack).packName == packNames.Number)
+            else if (((Pack)pr.pack).packName == packNames.Replay)
             {
-                if (Convert.ToInt32(((Pack)pr.pack).content) == 2)
+                if (((Pack)pr.pack).content.ToString() == "Yes" && gameWindow.getReplay())
                 {
-                    Position = firstPlayerCoord;
-                    OpponentPosition = secondPlayerCoord;
+                    gameWindow.Replay();
                 }
                 else
                 {
-                    Position = secondPlayerCoord;
-                    OpponentPosition = firstPlayerCoord;
+                    if(gameWindow != null)
+                        gameWindow.Close();
                 }
-                GameStart();
-            }
+            }  
         }
 
         private void SendFacing(Facing f)
@@ -230,20 +228,23 @@ namespace LineFight.model
 
             Random rand = new Random();
             if (Network.isServer()) {
-                int r = rand.Next(1000);
-                if (r < 500) {
-                    Pack p = new Pack(packNames.Number, 1);
-                    Network.send(p);
+                //int r = rand.Next(1000);
+                //if (r < 500) {
+                    //Pack p = new Pack(packNames.Number, 1);
+                    //Network.send(p);
+                    MyColor = Colors.Blue;
+                    OpponentColor = Colors.Red;
                     Position = firstPlayerCoord;
                     OpponentPosition = secondPlayerCoord;
-                } else {
-                    Pack p = new Pack(packNames.Number, 2);
-                    Network.send(p);
+               } else {
+                    //Pack p = new Pack(packNames.Number, 2);
+                    //Network.send(p);
+                    MyColor = Colors.Red;
+                    OpponentColor = Colors.Blue;
                     Position = secondPlayerCoord;
                     OpponentPosition = firstPlayerCoord;
                 }
                 GameStart();
-            }
         }
 
         public void GameStart()
