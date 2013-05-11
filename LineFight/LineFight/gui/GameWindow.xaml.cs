@@ -23,17 +23,17 @@ namespace LineFight.gui
 		private Profile OpponentProfile;
 		private DispatcherTimer Refresher;
 		private int Remaining = 6;
-        private bool replay = false;
+		private bool replay = false;
 
-        public bool getReplay()
-        {
-            return replay;
-        }
+		public bool getReplay()
+		{
+			return replay;
+		}
 
 		private void btnAbandon_Click(object o, RoutedEventArgs e)
 		{
 			Refresher.Stop();
-			this.Close();
+			this.Hide();
 		}
 
 		private void CountDown_Tick(object o, EventArgs e)
@@ -46,11 +46,11 @@ namespace LineFight.gui
 			}
 			else
 			{
-                Controller = new Game(this);
+				Controller = new Game(this);
 				CountDown.Stop();
 				countDownlb.Visibility = System.Windows.Visibility.Hidden;
-                Controller.Start();
-                Arena.Source = Controller.getArena();
+				Controller.Start();
+				Arena.Source = Controller.getArena();
 				NewGame();
 			}
 		}
@@ -62,7 +62,7 @@ namespace LineFight.gui
 
 		public void run() 
 		{
-            this.Show();
+			this.Show();
 			CountDown.Start();
 		}
 
@@ -146,33 +146,33 @@ namespace LineFight.gui
 				Refresher.Stop();
 				if (result == MessageBoxResult.Yes)
 				{
-                    Pack p = new Pack(packNames.Replay, "Yes");
-                    Network.send(p);
+					Pack p = new Pack(packNames.Replay, "Yes");
+					Network.send(p);
 				}
 				else
 				{
-                    Pack p = new Pack(packNames.Replay, "No");
-                    Network.send(p);
-					this.Close();
+					Pack p = new Pack(packNames.Replay, "No");
+					Network.send(p);
+					this.Hide();
 				}
 			}
 		}
 
 		public void opDisconnect()
 		{
-            this.Hide();
 			MessageBox.Show("Opponent disconnected! You win.", "Game over");
+			this.Hide();
 		}
 
 		private void newGameBtn_Click(object sender, RoutedEventArgs e)
 		{
-            Replay();
+			Replay();
 		}
 
-        public void Replay()
-        {
-            initialize(Network, MyProfile);
-            run();
-        }
+		public void Replay()
+		{
+			initialize(Network, MyProfile);
+			run();
+		}
 	}
 }
