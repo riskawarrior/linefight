@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LineFight", "LineFight\Line
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UniversalLobby", "UniversalLobby\UniversalLobby.csproj", "{EABEAC96-C69C-4F08-8CA2-344DFF4FEE7E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LineFightUnitTests", "LineFightUnitTests\LineFightUnitTests.csproj", "{B91645E8-F7BE-4F64-8A0B-4C83E5683582}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -59,6 +61,16 @@ Global
 		{EABEAC96-C69C-4F08-8CA2-344DFF4FEE7E}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{EABEAC96-C69C-4F08-8CA2-344DFF4FEE7E}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{EABEAC96-C69C-4F08-8CA2-344DFF4FEE7E}.Release|x86.ActiveCfg = Release|Any CPU
+		{B91645E8-F7BE-4F64-8A0B-4C83E5683582}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B91645E8-F7BE-4F64-8A0B-4C83E5683582}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B91645E8-F7BE-4F64-8A0B-4C83E5683582}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{B91645E8-F7BE-4F64-8A0B-4C83E5683582}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{B91645E8-F7BE-4F64-8A0B-4C83E5683582}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{B91645E8-F7BE-4F64-8A0B-4C83E5683582}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B91645E8-F7BE-4F64-8A0B-4C83E5683582}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B91645E8-F7BE-4F64-8A0B-4C83E5683582}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{B91645E8-F7BE-4F64-8A0B-4C83E5683582}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{B91645E8-F7BE-4F64-8A0B-4C83E5683582}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
