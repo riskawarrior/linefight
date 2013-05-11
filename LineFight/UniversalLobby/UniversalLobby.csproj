@@ -44,9 +44,6 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="gui\ConfirmReady.xaml.cs">
-      <DependentUpon>ConfirmReady.xaml</DependentUpon>
-    </Compile>
     <Compile Include="gui\Lobby.xaml.cs">
       <DependentUpon>Lobby.xaml</DependentUpon>
     </Compile>
@@ -59,10 +56,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Page Include="gui\ConfirmReady.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Page Include="gui\Lobby.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

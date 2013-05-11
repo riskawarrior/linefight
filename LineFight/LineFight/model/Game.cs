@@ -242,13 +242,13 @@ namespace LineFight.model
                     Position = secondPlayerCoord;
                     OpponentPosition = firstPlayerCoord;
                 }
-                GameStart();
             }
 
             Win = false;
             Lost = false;
             Arena = BitmapFactory.New(500, 500);
             Arena.Clear(Colors.Black);
+            GameStart();
         }
 
         public void GameStart()

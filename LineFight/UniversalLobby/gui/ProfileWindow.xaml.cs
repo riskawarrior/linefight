@@ -35,21 +35,13 @@ namespace UniversalLobby.gui
 		{
 			if (txtUserName.Text == "")
 			{
-				this.Close();
+				MessageBox.Show("The username is required.");
 			}
 			else
 			{
 				_profile.Username = txtUserName.Text;
-				_profile.Avatar = _image;
 				this.Close();
 			}
-		}
-
-		private bool ClosingWindow(bool useClose)
-		{
-			bool yesorno=false;
-			
-			return yesorno;
 		}
 
 		private void btnOpenAvatar_Click(object sender, RoutedEventArgs e)
@@ -71,17 +63,16 @@ namespace UniversalLobby.gui
 
 		private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
 		{
-			if (txtUserName.Text == "")
-			{
+			if (txtUserName.Text == "") {
 				var answer = MessageBox.Show("Username is missing. Are you sure to exit?", "Exiting", MessageBoxButton.OKCancel, MessageBoxImage.Question);
-				if (answer == MessageBoxResult.OK)
-				{
+				if (answer == MessageBoxResult.OK) {
 					e.Cancel = false;
-				}
-				else
-				{
+					Environment.Exit(0);
+				} else {
 					e.Cancel = true;
 				}
+			} else {
+				_profile.Username = txtUserName.Text;
 			}
 			
 		}

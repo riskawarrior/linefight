@@ -7,6 +7,7 @@ namespace UniversalLobby.model {
 	/// <summary>
 	/// A profil adatokat tartalmazó osztály.
 	/// </summary>
+	[Serializable]
 	public class Profile {
 
 		/// <summary>
@@ -28,27 +29,32 @@ namespace UniversalLobby.model {
 			//read property
 			get {
 				if (AvatarImg == null) {
-					AvatarImg = new BitmapImage();
-					MemoryStream ms = new MemoryStream(AvatarBytes);
-					ms.Seek(0, SeekOrigin.Begin);
+					if (AvatarBytes != null) {
+						AvatarImg = new BitmapImage();
+						MemoryStream ms = new MemoryStream(AvatarBytes);
+						ms.Seek(0, SeekOrigin.Begin);
 
-					AvatarImg.BeginInit();
-					AvatarImg.StreamSource = ms;
-					AvatarImg.EndInit();
+						AvatarImg.BeginInit();
+						AvatarImg.StreamSource = ms;
+						AvatarImg.EndInit();
+					}
 				}
 				return AvatarImg;
 			}
 			//write property
 			set {
 				AvatarImg = value;
-				MemoryStream ms = new MemoryStream();
 
-				/*PngBitmapEncoder encoder = new PngBitmapEncoder();
-				encoder.Frames.Add(BitmapFrame.Create(value));
-				encoder.Save(ms);
-				ms.Seek(0,SeekOrigin.Begin);
-				AvatarBytes = ms.ToArray();*/
-
+				if (value != null) {
+					MemoryStream ms = new MemoryStream();
+					PngBitmapEncoder encoder = new PngBitmapEncoder();
+					encoder.Frames.Add(BitmapFrame.Create(value));
+					encoder.Save(ms);
+					ms.Seek(0, SeekOrigin.Begin);
+					AvatarBytes = ms.ToArray();
+				} else {
+					AvatarBytes = null;
+				}
 			}
 		}
 
@@ -60,10 +66,6 @@ namespace UniversalLobby.model {
 			get;
 			//write property
 			set;
-		}
-
-		public Profile() {
-
 		}
 
 		/// <summary>

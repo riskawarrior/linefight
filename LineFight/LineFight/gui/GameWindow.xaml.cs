@@ -48,52 +48,52 @@ namespace LineFight.gui
 			}
 		}
 
-        public LFNet getNetwork()
-        {
-            return Network;
-        }
+		public LFNet getNetwork()
+		{
+			return Network;
+		}
 
 		public void run() 
-        {
-            CountDown.Start();
-            NewGame();
+		{
+			CountDown.Start();
+			NewGame();
 		}
 
 		public void initialize(UniversalLobby.model.LFNet network, UniversalLobby.model.Profile profile)
-        {
-            Network = network;
-            MyProfile = profile;
-            OpponentProfile = new Profile("BBB", new BitmapImage()); //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            Refresher = new DispatcherTimer();
-            Refresher.Interval = new TimeSpan(10);
-            Refresher.Tick += new EventHandler(Refresher_Tick);
-            CountDown = new DispatcherTimer();
-            CountDown.Interval = new TimeSpan(10000000);
-            CountDown.Tick += new EventHandler(CountDown_Tick);
-            if (MyProfile.Username == null)
-            {
-                playerNamelb.Content = "Me";
-            }
-            else
-            {
-                playerNamelb.Content = MyProfile.Username;
-            }
-            if (OpponentProfile.Username == null)
-            {
-                opponentNamelb.Content = "Opponent";
-            }
-            else
-            {
-                opponentNamelb.Content = OpponentProfile.Username;
-            }
-            if (MyProfile.Avatar != null)
-            {
-                ImgMyProfile.Source = MyProfile.Avatar;
-            }
-            if (OpponentProfile.Avatar != null)
-            {
-                ImgOpponentProfile.Source = MyProfile.Avatar;
-            }
+		{
+			Network = network;
+			MyProfile = profile;
+			OpponentProfile = Network.getOpponentProfile();
+			Refresher = new DispatcherTimer();
+			Refresher.Interval = new TimeSpan(10);
+			Refresher.Tick += new EventHandler(Refresher_Tick);
+			CountDown = new DispatcherTimer();
+			CountDown.Interval = new TimeSpan(10000000);
+			CountDown.Tick += new EventHandler(CountDown_Tick);
+			if (MyProfile.Username == null)
+			{
+				playerNamelb.Content = "Me";
+			}
+			else
+			{
+				playerNamelb.Content = MyProfile.Username;
+			}
+			if (OpponentProfile.Username == null)
+			{
+				opponentNamelb.Content = "Opponent";
+			}
+			else
+			{
+				opponentNamelb.Content = OpponentProfile.Username;
+			}
+			if (MyProfile.Avatar != null)
+			{
+				ImgMyProfile.Source = MyProfile.Avatar;
+			}
+			if (OpponentProfile.Avatar != null)
+			{
+				ImgOpponentProfile.Source = MyProfile.Avatar;
+			}
 		}
 
 		public GameWindow()

@@ -35,7 +35,7 @@ namespace UniversalLobby.gui
 
 		private void Window_Loaded(object sender, RoutedEventArgs e)
 		{
-			_profile = new Profile("",new BitmapImage());
+			_profile = new Profile("", null);
 			ProfileWindow profile = new ProfileWindow(_profile);
 			profile.ShowDialog();
 
@@ -47,50 +47,31 @@ namespace UniversalLobby.gui
 
 		private void btnConnect_Click(object sender, RoutedEventArgs e)
 		{
-			if (_profile.Username != "")
+			if (!String.IsNullOrEmpty(txtHost.Text) && !String.IsNullOrEmpty(txtPort.Text))
 			{
-				if (!String.IsNullOrEmpty(txtHost.Text) && !String.IsNullOrEmpty(txtPort.Text))
-				{
-					btnConnect.IsEnabled = false;
-					btnCreateGame.IsEnabled = false;
-					btnDisconnect.IsEnabled = true;
-					_lfnet.connect(txtHost.Text, Int32.Parse(txtPort.Text), _profile.Username, pwPassword.Password);
-					
-				}
-				else
-				{
-					MessageBox.Show("A host és port kitöltése kötelező!", "Error!", MessageBoxButton.OK, MessageBoxImage.Error);
-				}
+				btnProfile.IsEnabled = btnConnect.IsEnabled = false;
+				btnCreateGame.IsEnabled = false;
+				btnDisconnect.IsEnabled = true;
+				_lfnet.connect(txtHost.Text, Int32.Parse(txtPort.Text), _profile.Username, pwPassword.Password);
 			}
 			else
 			{
-				ProfileWindow profile = new ProfileWindow(_profile);
-				profile.ShowDialog();
+				MessageBox.Show("A host és port kitöltése kötelező!", "Error!", MessageBoxButton.OK, MessageBoxImage.Error);
 			}
 		}
 
 		private void btnCreateGame_Click(object sender, RoutedEventArgs e)
 		{
-			if (_profile.Username != "")
-			{
-				btnConnect.IsEnabled = false;
-				btnCreateGame.IsEnabled = false;
-				btnDisconnect.IsEnabled = true;
-				_lfnet.openServer(_profile.Username);
-				
-			}
-			else
-			{
-				ProfileWindow profile = new ProfileWindow(_profile);
-				profile.ShowDialog();
-			}
-			
+			btnProfile.IsEnabled = btnConnect.IsEnabled = false;
+			btnCreateGame.IsEnabled = false;
+			btnDisconnect.IsEnabled = true;
+			_lfnet.openServer(_profile.Username);
 		}
 
 		private void btnDisconnect_Click(object sender, RoutedEventArgs e)
 		{
 			_lfnet.disconnect();
-			btnConnect.IsEnabled = true;
+			btnProfile.IsEnabled = btnConnect.IsEnabled = true;
 			btnCreateGame.IsEnabled = true;
 			btnDisconnect.IsEnabled = false;
 		}
@@ -104,7 +85,6 @@ namespace UniversalLobby.gui
 		private void pwPassword_PasswordChanged(object sender, RoutedEventArgs e)
 		{
 			_lfnet.setPassword(pwPassword.Password);
-
 		}
 
 		private void btnExit_Click(object sender, RoutedEventArgs e)
@@ -114,48 +94,44 @@ namespace UniversalLobby.gui
 
 		private void NetClientEventHandler(object sender, NetClientEvent e)
 		{
-			if (e.ev == ClientEventType.connected)
-			{
-				if (_lfnet.isServer() && _lfnet.getClientNames().Length > 1)
+			this.Dispatcher.Invoke((Action)(() => {
+				if (e.ev == ClientEventType.disconnected)
 				{
-					_lfnet.kick(e.username);
+					MessageBox.Show("Kapcsolat megszakadt.");
+					btnProfile.IsEnabled = btnConnect.IsEnabled = true;
+					btnCreateGame.IsEnabled = true;
+					btnDisconnect.IsEnabled = false;
+					_lfnet.disconnect();
 				}
-				else
-				{
-					_lfnet.send(_profile);
-					game.initialize(_lfnet, _profile);
-					game.run();
-				}
-				
-			}
-			else if (e.ev == ClientEventType.disconnected)
-			{
-				_lfnet.disconnect();
-				btnConnect.IsEnabled = true;
-			}
+			}));
 		}
 
 		private void NetCoreEventHandler(object sender, NetCoreError e)
 		{
-			MessageBox.Show(e.error, "Hiba!", MessageBoxButton.OK);
-			btnConnect.IsEnabled = true;
-			btnCreateGame.IsEnabled = true;
-			btnDisconnect.IsEnabled = false;
+			this.Dispatcher.Invoke((Action)(() => {
+				MessageBox.Show(e.error, "Hiba!", MessageBoxButton.OK);
+				if (_lfnet.hasConnection()) {
+					_lfnet.disconnect();
+				}
+				btnProfile.IsEnabled = btnConnect.IsEnabled = true;
+				btnCreateGame.IsEnabled = true;
+				btnDisconnect.IsEnabled = false;
+			}));
 		}
 
 		private void NetPackageReceiveHandler(object sender, PackageReceived e)
 		{
-			if (((Profile)e.pack).Username != _profile.Username)
-			{
-                if (_lfnet.isServer())
-                {
-                    _lfnet.sendTo(_profile, ((Profile)e.pack).Username);
-                }
-                else
-                {
-                    _lfnet.send(_profile);
-                }
-			}
+			this.Dispatcher.Invoke((Action)(() => {
+				if (e.pack is string) {
+					if ((string)e.pack == "START") {
+						if (_lfnet.isClient()) {
+							_lfnet.send("START");
+						}
+						game.initialize(_lfnet, _profile);
+						game.run();
+					}
+				}
+			}));
 		}
 	}
 }
