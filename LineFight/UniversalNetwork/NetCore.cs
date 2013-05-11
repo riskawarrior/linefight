@@ -147,6 +147,7 @@ namespace UniversalNetwork {
 		/// </summary>
 		public NetCore() {
 			password = "";
+			clientnames = new Dictionary<string, Socket>();
 		}
 
 		/// <summary>
