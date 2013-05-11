@@ -45,25 +45,20 @@ namespace UniversalLobby.gui
 			_lfnet.ReceiveObservers += NetPackageReceiveHandler;
 		}
 
-		private void btnConnect_Click(object sender, RoutedEventArgs e)
-		{
-			if (!String.IsNullOrEmpty(txtHost.Text) && !String.IsNullOrEmpty(txtPort.Text))
-			{
-				btnProfile.IsEnabled = btnConnect.IsEnabled = false;
-				btnCreateGame.IsEnabled = false;
-				btnDisconnect.IsEnabled = true;
-				_lfnet.connect(txtHost.Text, Int32.Parse(txtPort.Text), _profile.Username, pwPassword.Password);
-			}
-			else
-			{
+		private void btnConnect_Click(object sender, RoutedEventArgs e) {
+			if (String.IsNullOrEmpty(txtHost.Text) || String.IsNullOrEmpty(txtPort.Text)) {
 				MessageBox.Show("A host és port kitöltése kötelező!", "Error!", MessageBoxButton.OK, MessageBoxImage.Error);
+				return;
 			}
+
+			btnProfile.IsEnabled = btnCreateGame.IsEnabled = btnConnect.IsEnabled = false;
+			btnDisconnect.IsEnabled = true;
+			_lfnet.connect(txtHost.Text, Int32.Parse(txtPort.Text), _profile.Username, pwPassword.Password);
 		}
 
 		private void btnCreateGame_Click(object sender, RoutedEventArgs e)
 		{
-			btnProfile.IsEnabled = btnConnect.IsEnabled = false;
-			btnCreateGame.IsEnabled = false;
+			btnProfile.IsEnabled = btnCreateGame.IsEnabled = btnConnect.IsEnabled = false;
 			btnDisconnect.IsEnabled = true;
 			_lfnet.openServer(_profile.Username);
 		}
@@ -71,8 +66,7 @@ namespace UniversalLobby.gui
 		private void btnDisconnect_Click(object sender, RoutedEventArgs e)
 		{
 			_lfnet.disconnect();
-			btnProfile.IsEnabled = btnConnect.IsEnabled = true;
-			btnCreateGame.IsEnabled = true;
+			btnProfile.IsEnabled = btnCreateGame.IsEnabled = btnConnect.IsEnabled = true;
 			btnDisconnect.IsEnabled = false;
 		}
 
@@ -98,8 +92,7 @@ namespace UniversalLobby.gui
 				if (e.ev == ClientEventType.disconnected)
 				{
 					MessageBox.Show("Kapcsolat megszakadt.");
-					btnProfile.IsEnabled = btnConnect.IsEnabled = true;
-					btnCreateGame.IsEnabled = true;
+					btnProfile.IsEnabled = btnCreateGame.IsEnabled = btnConnect.IsEnabled = true;
 					btnDisconnect.IsEnabled = false;
 					_lfnet.disconnect();
 				}
@@ -113,8 +106,7 @@ namespace UniversalLobby.gui
 				if (_lfnet.hasConnection()) {
 					_lfnet.disconnect();
 				}
-				btnProfile.IsEnabled = btnConnect.IsEnabled = true;
-				btnCreateGame.IsEnabled = true;
+				btnProfile.IsEnabled = btnCreateGame.IsEnabled = btnConnect.IsEnabled = true;
 				btnDisconnect.IsEnabled = false;
 			}));
 		}

@@ -21,7 +21,6 @@ namespace UniversalLobby.gui
 	public partial class ProfileWindow : Window
 	{
 		Profile _profile;
-		BitmapImage _image;
 		
 		public ProfileWindow(Profile profile)
 		{
@@ -36,12 +35,11 @@ namespace UniversalLobby.gui
 			if (txtUserName.Text == "")
 			{
 				MessageBox.Show("The username is required.");
+				return;
 			}
-			else
-			{
-				_profile.Username = txtUserName.Text;
-				this.Close();
-			}
+			
+			_profile.Username = txtUserName.Text;
+			this.Close();
 		}
 
 		private void btnOpenAvatar_Click(object sender, RoutedEventArgs e)
@@ -50,15 +48,10 @@ namespace UniversalLobby.gui
 
 			if (_fileDialog.ShowDialog() == true)
 			{
-				_image = new BitmapImage(new Uri(_fileDialog.FileName, UriKind.RelativeOrAbsolute));
+				BitmapImage _image = new BitmapImage(new Uri(_fileDialog.FileName, UriKind.RelativeOrAbsolute));
 				imgAvatar.Source = _image;
 				_profile.Avatar = _image;
 			}
-		}
-
-		private void txtUserName_TextChanged(object sender, TextChangedEventArgs e)
-		{
-			_profile.Username = txtUserName.Text;
 		}
 
 		private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
@@ -66,7 +59,6 @@ namespace UniversalLobby.gui
 			if (txtUserName.Text == "") {
 				var answer = MessageBox.Show("Username is missing. Are you sure to exit?", "Exiting", MessageBoxButton.OKCancel, MessageBoxImage.Question);
 				if (answer == MessageBoxResult.OK) {
-					e.Cancel = false;
 					Environment.Exit(0);
 				} else {
 					e.Cancel = true;
