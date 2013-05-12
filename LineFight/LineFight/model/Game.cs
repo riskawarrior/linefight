@@ -41,10 +41,10 @@ namespace LineFight.model
         private Facing OpponentFacing = Facing.Down;
         private Point Position;
         private Point OpponentPosition;
-        private int Speed = 10;
+        private int Speed = 16;
         private bool Win = false;
         private Point firstPlayerCoord = new Point(5, 5);
-        private Point secondPlayerCoord = new Point(495, 5);
+        private Point secondPlayerCoord = new Point(295, 5);
         private GameWindow gameWindow;
 
         public Game(GameWindow gWindow)
@@ -223,21 +223,21 @@ namespace LineFight.model
         {
             Win = false;
             Lost = false;
-            Arena = BitmapFactory.New(500, 500);
+            Arena = BitmapFactory.New(300, 300);
             Arena.Clear(Colors.Black);
 
             Random rand = new Random();
             if (Network.isServer())
             {
-                MyColor = Colors.Blue;
-                OpponentColor = Colors.Red;
+                MyColor = Colors.Lime;
+                OpponentColor = Colors.Yellow;
                 Position = firstPlayerCoord;
                 OpponentPosition = secondPlayerCoord;
              } 
              else 
              {
-                MyColor = Colors.Red;
-                OpponentColor = Colors.Blue;
+                MyColor = Colors.Yellow;
+                OpponentColor = Colors.Lime;
                 Position = secondPlayerCoord;
                 OpponentPosition = firstPlayerCoord;
               }
