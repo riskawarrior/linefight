@@ -227,24 +227,21 @@ namespace LineFight.model
             Arena.Clear(Colors.Black);
 
             Random rand = new Random();
-            if (Network.isServer()) {
-                //int r = rand.Next(1000);
-                //if (r < 500) {
-                    //Pack p = new Pack(packNames.Number, 1);
-                    //Network.send(p);
-                    MyColor = Colors.Blue;
-                    OpponentColor = Colors.Red;
-                    Position = firstPlayerCoord;
-                    OpponentPosition = secondPlayerCoord;
-               } else {
-                    //Pack p = new Pack(packNames.Number, 2);
-                    //Network.send(p);
-                    MyColor = Colors.Red;
-                    OpponentColor = Colors.Blue;
-                    Position = secondPlayerCoord;
-                    OpponentPosition = firstPlayerCoord;
-                }
-                GameStart();
+            if (Network.isServer())
+            {
+                MyColor = Colors.Blue;
+                OpponentColor = Colors.Red;
+                Position = firstPlayerCoord;
+                OpponentPosition = secondPlayerCoord;
+             } 
+             else 
+             {
+                MyColor = Colors.Red;
+                OpponentColor = Colors.Blue;
+                Position = secondPlayerCoord;
+                OpponentPosition = firstPlayerCoord;
+              }
+              GameStart();
         }
 
         public void GameStart()
