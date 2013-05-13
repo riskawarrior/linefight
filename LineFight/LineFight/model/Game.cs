@@ -41,7 +41,7 @@ namespace LineFight.model
         private Facing OpponentFacing;
         private Point Position;
         private Point OpponentPosition;
-        private int Speed = 200000;
+        private int Speed = 100000;
         private bool Win = false;
         private Point firstPlayerCoord = new Point(150, 5);
         private Point secondPlayerCoord = new Point(150, 295);
