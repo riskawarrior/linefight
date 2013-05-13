@@ -32,19 +32,19 @@ namespace LineFight.model
     class Game
     {
         private WriteableBitmap Arena;
-        private Facing Facing = Facing.Down;
+        private Facing Facing;
         private bool Lost = false;
         private DispatcherTimer Mover;
         private Color MyColor;
         private LFNet Network;
         private Color OpponentColor;
-        private Facing OpponentFacing = Facing.Down;
+        private Facing OpponentFacing;
         private Point Position;
         private Point OpponentPosition;
-        private int Speed = 16;
+        private int Speed = 200000;
         private bool Win = false;
-        private Point firstPlayerCoord = new Point(5, 5);
-        private Point secondPlayerCoord = new Point(295, 5);
+        private Point firstPlayerCoord = new Point(150, 5);
+        private Point secondPlayerCoord = new Point(150, 295);
         private GameWindow gameWindow;
 
         public Game(GameWindow gWindow)
@@ -192,6 +192,7 @@ namespace LineFight.model
                 else if (((Pack)pr.pack).content.ToString() == "Lost")
                 {
                     Lost = false;
+                    Win = true;
                 }
                 else
                 {
@@ -199,18 +200,6 @@ namespace LineFight.model
                     Win = true;
                 }
             }
-            else if (((Pack)pr.pack).packName == packNames.Replay)
-            {
-                if (((Pack)pr.pack).content.ToString() == "Yes" && gameWindow.getReplay())
-                {
-                    gameWindow.Replay();
-                }
-                else
-                {
-                    if(gameWindow != null)
-                        gameWindow.Close();
-                }
-            }  
         }
 
         private void SendFacing(Facing f)
@@ -233,6 +222,8 @@ namespace LineFight.model
                 OpponentColor = Colors.Yellow;
                 Position = firstPlayerCoord;
                 OpponentPosition = secondPlayerCoord;
+                Facing = model.Facing.Down;
+                OpponentFacing = model.Facing.Up;
              } 
              else 
              {
@@ -240,6 +231,8 @@ namespace LineFight.model
                 OpponentColor = Colors.Lime;
                 Position = secondPlayerCoord;
                 OpponentPosition = firstPlayerCoord;
+                Facing = model.Facing.Up;
+                OpponentFacing = model.Facing.Down;
               }
               GameStart();
         }

@@ -30,12 +30,6 @@ namespace LineFight.gui
 			return replay;
 		}
 
-		private void btnAbandon_Click(object o, RoutedEventArgs e)
-		{
-			Refresher.Stop();
-			this.Hide();
-		}
-
 		private void CountDown_Tick(object o, EventArgs e)
 		{
 			//int Remaining = Convert.ToInt32(countDownlb.Content.ToString());
@@ -106,8 +100,13 @@ namespace LineFight.gui
 		public GameWindow()
 		{
 			InitializeComponent();
-			
+			this.Closing += GameWindow_Closing;
 		}
+
+        private void GameWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            Network.disconnect();
+        }
 
 		private void Window_KeyDown(object sender, KeyEventArgs e)
 		{
@@ -133,28 +132,18 @@ namespace LineFight.gui
 				MessageBoxResult result = MessageBoxResult.No;
 				if (Controller.IsLost() && Controller.IsWin())
 				{
-					result = MessageBox.Show("Draw! Wanna play again?", "Game over", MessageBoxButton.YesNo);
+					result = MessageBox.Show("Draw!", "Game over", MessageBoxButton.OK);
 				}
 				else if (Controller.IsLost())
 				{
-					result =  MessageBox.Show("You lost! Wanna play again?", "Game over", MessageBoxButton.YesNo);
+					result =  MessageBox.Show("You lost!", "Game over", MessageBoxButton.OK);
 				}
 				else if (Controller.IsWin())
 				{
-					result = MessageBox.Show("You win! Wanna play again?", "Game over", MessageBoxButton.YesNo);
+					result = MessageBox.Show("You win!", "Game over", MessageBoxButton.OK);
 				}
 				Refresher.Stop();
-				if (result == MessageBoxResult.Yes)
-				{
-					Pack p = new Pack(packNames.Replay, "Yes");
-					Network.send(p);
-				}
-				else
-				{
-					Pack p = new Pack(packNames.Replay, "No");
-					Network.send(p);
-					this.Hide();
-				}
+                this.Hide();
 			}
 		}
 
@@ -162,17 +151,6 @@ namespace LineFight.gui
 		{
 			MessageBox.Show("Opponent disconnected! You win.", "Game over");
 			this.Hide();
-		}
-
-		private void newGameBtn_Click(object sender, RoutedEventArgs e)
-		{
-			Replay();
-		}
-
-		public void Replay()
-		{
-			initialize(Network, MyProfile);
-			run();
 		}
 	}
 }
