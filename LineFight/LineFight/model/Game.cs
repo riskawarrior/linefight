@@ -33,7 +33,7 @@ namespace LineFight.model
     {
         private WriteableBitmap Arena;
         private Facing Facing;
-        private bool Lost = false;
+        private bool Lost;
         private DispatcherTimer Mover;
         private Color MyColor;
         private LFNet Network;
@@ -42,7 +42,7 @@ namespace LineFight.model
         private Point Position;
         private Point OpponentPosition;
         private int Speed = 100000;
-        private bool Win = false;
+        private bool Win;
         private Point firstPlayerCoord = new Point(150, 5);
         private Point secondPlayerCoord = new Point(150, 295);
         private GameWindow gameWindow;
@@ -198,6 +198,17 @@ namespace LineFight.model
                 {
                     Lost = true;
                     Win = true;
+                }
+            }
+            else if (((Pack)pr.pack).packName == packNames.Replay)
+            {
+                if (((Pack)pr.pack).content.ToString() == "Yes")
+                {
+                    gameWindow.setReplay("Yes");
+                }
+                else
+                {
+                    gameWindow.setReplay("No");
                 }
             }
         }

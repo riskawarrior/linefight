@@ -23,12 +23,17 @@ namespace LineFight.gui
 		private Profile OpponentProfile;
 		private DispatcherTimer Refresher;
 		private int Remaining = 6;
-		private bool replay = false;
+		private String replay;
 
-		public bool getReplay()
+		public String getReplay()
 		{
 			return replay;
 		}
+
+        public void setReplay(String r)
+        {
+            replay = r;
+        }
 
 		private void CountDown_Tick(object o, EventArgs e)
 		{
@@ -46,6 +51,7 @@ namespace LineFight.gui
 				Controller.Start();
 				Arena.Source = Controller.getArena();
 				NewGame();
+                Remaining = 6;
 			}
 		}
 
@@ -56,13 +62,15 @@ namespace LineFight.gui
 
 		public void run() 
 		{
+            countDownlb.Visibility = System.Windows.Visibility.Visible;
 			this.Show();
 			CountDown.Start();
 		}
 
 		public void initialize(UniversalLobby.model.LFNet network, UniversalLobby.model.Profile profile)
 		{
-			Network = network;
+            replay = "None";
+            Network = network;
 			MyProfile = profile;
 			OpponentProfile = Network.getOpponentProfile();
 			Refresher = new DispatcherTimer();
@@ -132,18 +140,42 @@ namespace LineFight.gui
 				MessageBoxResult result = MessageBoxResult.No;
 				if (Controller.IsLost() && Controller.IsWin())
 				{
-					result = MessageBox.Show("Draw!", "Game over", MessageBoxButton.OK);
+					result = MessageBox.Show("Draw! Wanna play again?", "Game over", MessageBoxButton.YesNo);
 				}
 				else if (Controller.IsLost())
 				{
-					result =  MessageBox.Show("You lost!", "Game over", MessageBoxButton.OK);
+                    result = MessageBox.Show("You lost! Wanna play again?", "Game over", MessageBoxButton.YesNo);
 				}
 				else if (Controller.IsWin())
 				{
-					result = MessageBox.Show("You win!", "Game over", MessageBoxButton.OK);
+                    result = MessageBox.Show("You win! Wanna play again?", "Game over", MessageBoxButton.YesNo);
 				}
 				Refresher.Stop();
-                this.Hide();
+                //this.Hide();
+                if (result == MessageBoxResult.Yes)
+                {
+                    Pack p = new Pack(packNames.Replay, "Yes");
+                    Network.send(p);
+
+                    this.Dispatcher.Invoke((Action)(() =>
+                    {
+                        if (replay == "Yes")
+                        {
+                            initialize(Network, MyProfile);
+                            run();
+                        }
+                        else if(replay == "No")
+                        {
+                            this.Hide();
+                        }
+                    }));
+                }
+                else
+                {
+                    Pack p = new Pack(packNames.Replay, "No");
+                    Network.send(p);
+                    this.Hide();
+                }
 			}
 		}
 
